@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java进阶," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="该文章主要是描述如何使用重构方法来精简代码，使代码看起来更有灵性。 重构原则1234567891011121314151617181. 三次法则（事不过三，三则重构）2. 何时重构：（1）添加功能时重构（2）修补错误时重构（3）复审代码时重构3. 重构优点：（1）允许逻辑共享（2）分开解释意图和实现（3）隔离变化（4）封装条件逻辑4. 重构难点：（1）数据库（2）修改接口	解决办法：不要过早发布接">
+<meta name="keywords" content="Java进阶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java如何写出简洁代码">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;30&#x2F;java%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E7%AE%80%E6%B4%81%E4%BB%A3%E7%A0%81&#x2F;index.html">
+<meta property="og:site_name" content="一颗小草">
+<meta property="og:description" content="该文章主要是描述如何使用重构方法来精简代码，使代码看起来更有灵性。 重构原则1234567891011121314151617181. 三次法则（事不过三，三则重构）2. 何时重构：（1）添加功能时重构（2）修补错误时重构（3）复审代码时重构3. 重构优点：（1）允许逻辑共享（2）分开解释意图和实现（3）隔离变化（4）封装条件逻辑4. 重构难点：（1）数据库（2）修改接口	解决办法：不要过早发布接">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-30T09:22:11.119Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/30/java如何写出简洁代码/"/>
+
+
+
+
+
+  <title>java如何写出简洁代码 | 一颗小草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一颗小草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">好好学习，天天向上</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/30/java%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E7%AE%80%E6%B4%81%E4%BB%A3%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="linestyle">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一颗小草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">java如何写出简洁代码</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-30T16:48:47+08:00">
+                2019-10-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>该文章主要是描述如何使用重构方法来精简代码，使代码看起来更有灵性。</p>
+<h2 id="重构原则"><a href="#重构原则" class="headerlink" title="重构原则"></a>重构原则</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. 三次法则（事不过三，三则重构）</span><br><span class="line"><span class="number">2</span>. 何时重构：</span><br><span class="line">（<span class="number">1</span>）添加功能时重构</span><br><span class="line">（<span class="number">2</span>）修补错误时重构</span><br><span class="line">（<span class="number">3</span>）复审代码时重构</span><br><span class="line"><span class="number">3</span>. 重构优点：</span><br><span class="line">（<span class="number">1</span>）允许逻辑共享</span><br><span class="line">（<span class="number">2</span>）分开解释意图和实现</span><br><span class="line">（<span class="number">3</span>）隔离变化</span><br><span class="line">（<span class="number">4</span>）封装条件逻辑</span><br><span class="line"><span class="number">4</span>. 重构难点：</span><br><span class="line">（<span class="number">1</span>）数据库</span><br><span class="line">（<span class="number">2</span>）修改接口</span><br><span class="line">	解决办法：不要过早发布接口，请修改你的代码所有权策略，</span><br><span class="line">	使重构更顺畅。</span><br><span class="line">（<span class="number">3</span>）难以通过重构手法完成的设计改动</span><br><span class="line"><span class="number">5</span>. 重构与设计：</span><br><span class="line"> 重构肩负一项特殊使命，它和设计彼此互补。</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码坏味道"><a href="#代码坏味道" class="headerlink" title="代码坏味道"></a>代码坏味道</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Duplicated Code（重复代码）</span><br><span class="line">Long Method（过长函数）</span><br><span class="line">Large Class（过大的类）</span><br><span class="line">Long Parameters List（过长参数列）</span><br><span class="line">Divergent Change（发散式变化）-&gt; 一个类受多种变化的影响</span><br><span class="line">Shotgun Surgery（霰弹式修改）-&gt; 一种变化引发多个类相应修改</span><br><span class="line">Feature Envy（依恋情结）-&gt; 将数据和数据的操作行为包装在一起的技术</span><br><span class="line">Data Clumps（数据泥团）</span><br><span class="line">Primitive Obsession（基本类型偏执）</span><br><span class="line">Switch Statements（<span class="keyword">switch</span>惊悚现身）</span><br><span class="line">Parallel Inheritance Hierarchies（平行继承行为）</span><br><span class="line">Lazy Class（冗余类）</span><br><span class="line">Sepculative Generality</span><br><span class="line">Temporary Field（令人迷惑的暂时字段）</span><br><span class="line">Message Chain（过度耦合的消息链）</span><br><span class="line">Middle Many（中间人）</span><br><span class="line">Inappropriate Intimacy（狎昵关系）</span><br><span class="line">Alternative Classes with Different Interfaces（异曲同工的类）</span><br><span class="line">Incomplete Library Class（不完善的类库）</span><br><span class="line">Data Class（纯稚的数据类）</span><br><span class="line">Refused Bequest（被拒绝的遗赠）</span><br><span class="line">Comments（过多的注释）-&gt; 当你感觉需要撰写注释时，请先尝试重构，试着让所有注释变得多余。</span><br></pre></td></tr></table></figure>
+<h2 id="构筑测试体系"><a href="#构筑测试体系" class="headerlink" title="构筑测试体系"></a>构筑测试体系</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">确保所有测试都完全自动化，让它们检查自己的测试结果。</span><br><span class="line">一套测试就是一个强大的侦测器，能够大大缩短查询bug所需要的时间</span><br><span class="line">频繁的运行测试，每次编译请把测试也考虑进去————每天至少执行每个测试一次</span><br><span class="line">每当你收到bug报告，请先写一个单元测试来暴露bug.</span><br><span class="line">编写未臻完善的测试并实际运行，好过对完善测试的无尽等待。</span><br><span class="line">考虑可能出错的边界条件，把测试火力集中在那儿</span><br><span class="line">当事情被认为应该出错时，别忘了检查是否抛出了预期的异常。</span><br><span class="line">不要因为测试无法捕捉所有bug就不写测试，因为测试的确可以捕捉到大多数的bug。</span><br></pre></td></tr></table></figure>
+
+<h2 id="重构列表"><a href="#重构列表" class="headerlink" title="重构列表"></a>重构列表</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. 重构记录格式：</span><br><span class="line">name、summary、motivation、mechanics、examples</span><br><span class="line">（<span class="number">1</span>）summary：</span><br><span class="line">一句话，介绍这个重构能够帮助解决的问题</span><br><span class="line">一段简述，介绍你应该做的事</span><br><span class="line">一幅速写图，简单展现重构前后示例</span><br><span class="line">（<span class="number">2</span>）mechanics：</span><br><span class="line">简短的笔记，为了让自己在一段时间不做某项重构之后还能记录怎么做。</span><br><span class="line">（<span class="number">3</span>）examples</span><br><span class="line">像是简单有趣的教科书</span><br><span class="line"><span class="number">2</span>. 寻找引用点</span><br><span class="line">（<span class="number">1</span>）如果被删除的部分在继承体系中声明不上一次</span><br><span class="line">（<span class="number">2</span>）编译器可能很慢</span><br><span class="line">（<span class="number">3</span>）编译器无法找到通过反射机制而得到的引用点</span><br></pre></td></tr></table></figure>
+
+<h2 id="重新组织函数"><a href="#重新组织函数" class="headerlink" title="重新组织函数"></a>重新组织函数</h2><h3 id="Extract-Method（提炼函数）"><a href="#Extract-Method（提炼函数）" class="headerlink" title="Extract Method（提炼函数）"></a>Extract Method（提炼函数）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">motivation：喜欢简短而命名良好的函数，细粒度函数，被复用的机会更大，函数的覆写也更容易些</span><br><span class="line">mechanics：</span><br><span class="line">（<span class="number">1</span>）创造一个新函数</span><br><span class="line">（<span class="number">2</span>）将提炼的代码从源函数复制到新建的目标函数中</span><br><span class="line">（<span class="number">3</span>）仔细检查提炼出的代码，看看其中是否引用了“作用域源于源函数”的变量（包括局部变量和源函数参数）</span><br><span class="line">（<span class="number">4</span>）检查是否有“仅用于被提炼代码段”的临时变量。如果有，在目标函数中将它们声明为临时变量</span><br><span class="line">（<span class="number">5</span>）检查被提炼代码段，看看是否有任何局部变量的值被它改变。</span><br><span class="line">（<span class="number">6</span>）将被提炼代码段中需要读取的局部变量，当作参数传给目标函数</span><br></pre></td></tr></table></figure>
+
+<h3 id="Inline-Method（内联函数）"><a href="#Inline-Method（内联函数）" class="headerlink" title="Inline Method（内联函数）"></a>Inline Method（内联函数）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *（1）查检函数，确定它不具备多态性</span></span><br><span class="line"><span class="comment"> *（2）找出这个函数的所有被调用点</span></span><br><span class="line"><span class="comment"> *（3）将这个函数的所有被调用点都替换为函数本体</span></span><br><span class="line"><span class="comment"> *（4）编译，测试</span></span><br><span class="line"><span class="comment"> *（5）删除该函数的定义</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getRating</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> moreThanFiveDeliveries() ? <span class="number">2</span> : <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">moreThanFiveDelivers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _numberOfLateDeliveries &gt; <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getRating</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (_numberOfLateDeliveries &gt; <span class="number">5</span>) ? <span class="number">2</span> : <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Inline-Temp（内联临时变量）"><a href="#Inline-Temp（内联临时变量）" class="headerlink" title="Inline Temp（内联临时变量）"></a>Inline Temp（内联临时变量）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> basePrice = anOrder.basePrice();</span><br><span class="line"><span class="keyword">return</span> (basePrice &gt; <span class="number">1000</span>);</span><br><span class="line">-&gt; </span><br><span class="line"><span class="keyword">return</span> (anOrder.basePrice() &gt; <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="Replace-Temp-With-Query（以查询取代临时变量）"><a href="#Replace-Temp-With-Query（以查询取代临时变量）" class="headerlink" title="Replace Temp With Query（以查询取代临时变量）"></a>Replace Temp With Query（以查询取代临时变量）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> basePrice = _quantity * _itemPrice;</span><br><span class="line"><span class="keyword">if</span> (basePrice &gt; <span class="number">1000</span>) </span><br><span class="line">    <span class="keyword">return</span> basePrice * <span class="number">0.95</span>;</span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">    <span class="keyword">return</span> basePrice * <span class="number">0.98</span>;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="keyword">if</span> (basePrice() &gt; <span class="number">1000</span>) </span><br><span class="line">    <span class="keyword">return</span> basePrice() * <span class="number">0.95</span>;</span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">    <span class="keyword">return</span> basePrice() * <span class="number">0.98</span>;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">basePrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _quantity * _itemPrice;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Introduce-Explaing-Variable（引入解释性变量）"><a href="#Introduce-Explaing-Variable（引入解释性变量）" class="headerlink" title="Introduce Explaing Variable（引入解释性变量）"></a>Introduce Explaing Variable（引入解释性变量）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((platform.toUpperCase().indexOf(<span class="string">"MAC"</span>) &gt; -<span class="number">1</span>) &amp;&amp; </span><br><span class="line">    (browser.toUpperCase().indexOf(<span class="string">"IE"</span>) &gt; -<span class="number">1</span>) &amp;&amp;</span><br><span class="line">    wasInitialized() &amp;&amp; resize &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="keyword">final</span> boolen isMacOs = platform.toUpperCase().indexOf(<span class="string">"MAC"</span>) &gt; -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">boolean</span> isIEBrowser = browser.toUpperCase().indexOf(<span class="string">"IE"</span>) &gt; -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">boolean</span> wasResized = resize &gt; <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (isMacOs &amp;&amp; isIEBrowser &amp;&amp; wasResized) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _quantity * _itemPrice - </span><br><span class="line">        Math.max(<span class="number">0</span>, _quantity - <span class="number">500</span>) * _itemPrice * <span class="number">0.05</span> +</span><br><span class="line">        Math.min(_quantity * _itemPrice * <span class="number">0.1</span>, <span class="number">100.0</span>);</span><br><span class="line">&#125;</span><br><span class="line">-&gt; </span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">double</span> basePrice = _quantity * _itemPrice;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">double</span> quantityDiscount = Math.max(<span class="number">0</span>, _quantity - <span class="number">500</span>) * _itemPrice * <span class="number">0.05</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">double</span> shpping = Math.min(basePrice * <span class="number">0.1</span>, <span class="number">100.0</span>);</span><br><span class="line">    <span class="keyword">return</span> basePrice - quantityDiscount + shpping;</span><br><span class="line">&#125;</span><br><span class="line">-&gt; </span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> basePrice() * quantityDiscount() * shpping();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">basePrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _quantity * _itemPrice;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">quantityDiscount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Math.max(<span class="number">0</span>, _quantity - <span class="number">500</span>) * _itemPrice * <span class="number">0.05</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">shpping</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Math.min(basePrice * <span class="number">0.1</span>, <span class="number">100.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Split-Temporary-Variable（分解临时变量）"><a href="#Split-Temporary-Variable（分解临时变量）" class="headerlink" title="Split Temporary Variable（分解临时变量）"></a>Split Temporary Variable（分解临时变量）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> temp = <span class="number">2</span> * (_heigth + _width);</span><br><span class="line">sysout(temp);</span><br><span class="line">temp = _heigth * _width;</span><br><span class="line">sysout(temp);</span><br><span class="line">-&gt;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">double</span> perimeter = <span class="number">2</span> * (_heigth + _width);</span><br><span class="line">sysout(perimeter);</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">double</span> area = _heigth * _width;</span><br><span class="line">sysout(area);</span><br><span class="line">-&gt;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">getDistanceTravelled</span><span class="params">(<span class="keyword">int</span> time)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> result;</span><br><span class="line">    finall <span class="keyword">double</span> primaryAcc = _primaryForce / _mass;</span><br><span class="line">    <span class="keyword">int</span> primaryTime = Math.min(time, _delay);</span><br><span class="line">    <span class="keyword">return</span> = <span class="number">0.5</span> * primaryAcc * primaryTime * primaryTime;</span><br><span class="line">    <span class="keyword">int</span> secondaryTime = time - _delay;</span><br><span class="line">    <span class="keyword">if</span> (secondaryTime &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">double</span> primaryVel = primaryAcc * _delay;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">double</span> secondaryAcc = (_primaryForce + _secondaryForce) / _mass;</span><br><span class="line">        result += primaryVel * secondaryTime + <span class="number">0.5</span> * secondaryAcc * secondaryTime * secondaryTime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="Remove-Assignments-to-Parameters（移除对参数的赋值）"><a href="#Remove-Assignments-to-Parameters（移除对参数的赋值）" class="headerlink" title="Remove Assignments to Parameters（移除对参数的赋值）"></a>Remove Assignments to Parameters（移除对参数的赋值）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">gamma</span> <span class="params">(<span class="keyword">int</span> inputVal, <span class="keyword">int</span> quantity, <span class="keyword">int</span> yearToDate)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> importantValue1 = (inputVal * quantity) + delta();</span><br><span class="line">        <span class="keyword">int</span> importantValue2 = (inputVal * quantity) + <span class="number">100</span>;</span><br><span class="line">        <span class="keyword">if</span> (yearToDate - importantValue1 &gt; <span class="number">100</span>)</span><br><span class="line">            importantValue2 -= <span class="number">20</span>;</span><br><span class="line">        <span class="keyword">int</span> importantValue3 = importantValue2 * <span class="number">7</span>;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">        <span class="keyword">return</span> importantValue3 - <span class="number">2</span> * importantValue1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">-&gt; </span><br><span class="line">Gamma &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Account _account;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> inputVal;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> quantity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> yearToDate;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> importantValue1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> importantValue2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> importantValue3;</span><br><span class="line">        Gamma(source, inputVal, quantity, yearToDate) &#123;</span><br><span class="line">        _account = source;</span><br><span class="line">        inputVal = inputVal;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        importantValue1 = (inputVal * quantity) + _account.delta();</span><br><span class="line">        importantValue2 = (inputVal * quantity) + <span class="number">100</span>;</span><br><span class="line">        <span class="keyword">if</span> (yearToDate - importantValue1 &gt; <span class="number">100</span>)</span><br><span class="line">            importantValue2 -= <span class="number">20</span>;</span><br><span class="line">        importantValue3 = importantValue2 * <span class="number">7</span>;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">        <span class="keyword">return</span> importantValue3 - <span class="number">2</span> * importantValue1;</span><br><span class="line">    &#125;</span><br><span class="line">    -&gt;</span><br><span class="line">    importThing() &#123;</span><br><span class="line">        <span class="keyword">if</span> (yearToDate - importantValue1 &gt; <span class="number">100</span>)</span><br><span class="line">            importantValue2 -= <span class="number">20</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">-&gt; </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gamma</span> <span class="params">(<span class="keyword">int</span> inputVal, <span class="keyword">int</span> quantity, <span class="keyword">int</span> yearToDate)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Gamma(<span class="keyword">this</span>, inputVal, quantity, yearToDate).compute();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Substitude-Algorithm（替换算法）"><a href="#Substitude-Algorithm（替换算法）" class="headerlink" title="Substitude Algorithm（替换算法）"></a>Substitude Algorithm（替换算法）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">foundPerson</span><span class="params">(String[] people)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; people.length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (people[i].equals(<span class="string">"Don"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Don"</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">if</span> (people[i].equals(<span class="string">"John"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"John"</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">if</span> (people[i].equals(<span class="string">"Kent"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Kent"</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="function">String <span class="title">foundPerson</span><span class="params">(String[] people)</span> </span>&#123; </span><br><span class="line">    List&lt;String&gt; candidates = Arrays.asList(<span class="string">"Don"</span>,<span class="string">"John"</span>,<span class="string">"Kent"</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; people.length; i++) </span><br><span class="line">        <span class="keyword">if</span> (candidates.contains(people[i])) </span><br><span class="line">            <span class="keyword">return</span> people[i];</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="在对象之间搬移特性"><a href="#在对象之间搬移特性" class="headerlink" title="在对象之间搬移特性"></a>在对象之间搬移特性</h2><h3 id="Move-Method（搬移函数）"><a href="#Move-Method（搬移函数）" class="headerlink" title="Move Method（搬移函数）"></a>Move Method（搬移函数）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动机：搬移函数是重构理论的支柱，解耦。</span></span><br><span class="line"><span class="comment"> * 做法：</span></span><br><span class="line"><span class="comment"> *（1）检查源类中被源函数所使用的一切特性（包括字段和函数），考虑它们是否也该被搬移。</span></span><br><span class="line"><span class="comment"> *（2）检查源类的子类和超类，看看是否有该函数的其它声明。</span></span><br><span class="line"><span class="comment"> *（3）在目标类中声明这个函数。</span></span><br><span class="line"><span class="comment"> *（4）将源函数的代码复制到目标函数中，并在源函数调用后者。</span></span><br><span class="line"><span class="comment"> *（5）编译目标类</span></span><br><span class="line"><span class="comment"> *（6）决定如何从源函数正确引用目标对象</span></span><br><span class="line"><span class="comment"> *（7）修改源函数，使之成为一个纯委托函数</span></span><br><span class="line"><span class="comment"> *（8）编译，测试</span></span><br><span class="line"><span class="comment"> *（9）决定是否删除源函数，或将它当作一个委托函数保留下来。</span></span><br><span class="line"><span class="comment"> *（10）如果要移除源函数，请将源类中对源函数的所有调用，替换为目标函数的调用。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">overdraftCharge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**f (_type.isPreminum()) &#123;</span></span><br><span class="line"><span class="comment">            double result = 10;</span></span><br><span class="line"><span class="comment">            if (_dayOverdrawn &gt; 7) result += (_dayOverdrawn - 7) * 0.85;</span></span><br><span class="line"><span class="comment">            return result;</span></span><br><span class="line"><span class="comment">        &#125; </span></span><br><span class="line"><span class="comment">        else return _dayOverdrawn * 1.75;*/</span></span><br><span class="line">        <span class="keyword">return</span> _type.overdraftCharge(_dayOverdrawn);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">bankCharge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> result = <span class="number">4.5</span>;</span><br><span class="line">        <span class="comment">// if (_dayOverdrawn &gt; 0) result += overdraftCharge();</span></span><br><span class="line">        <span class="keyword">if</span> (_dayOverdrawn &gt; <span class="number">0</span>)</span><br><span class="line">            result += _type.overdraftCharge(_dayOverdrawn);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AccountType</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">overdraftCharge</span><span class="params">(<span class="keyword">int</span> dayOverdrawn)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isPreminum()) &#123;</span><br><span class="line">            <span class="keyword">double</span> result = <span class="number">10</span>;</span><br><span class="line">            <span class="keyword">if</span> (dayOverdrawn &gt; <span class="number">7</span>) result += (dayOverdrawn - <span class="number">7</span>) * <span class="number">0.85</span>;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">return</span> dayOverdrawn * <span class="number">1.75</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Move-Field-搬移字段"><a href="#Move-Field-搬移字段" class="headerlink" title="Move Field 搬移字段"></a>Move Field 搬移字段</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动机：在类之间移动状态与行为，是重构过程中必不可少的措施。</span></span><br><span class="line"><span class="comment"> * 做法：</span></span><br><span class="line"><span class="comment"> *  （1）如果字段的访问级是pulic，使用Encaspsulate Field将它封装起来</span></span><br><span class="line"><span class="comment"> *  （2）编译，测试</span></span><br><span class="line"><span class="comment"> *  （3）在目标类中建立与源字段相同的字段，并同时建立相应的设值/取值函数。</span></span><br><span class="line"><span class="comment"> *  （4）编译目标类。</span></span><br><span class="line"><span class="comment"> *  （5）决定如何在源对象中引用目标对象</span></span><br><span class="line"><span class="comment"> *  （6）删除源字段。</span></span><br><span class="line"><span class="comment"> *  （7）编译，测试</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> AccountType _type;</span><br><span class="line">    <span class="comment">// private double _interestRate;</span></span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">interestForAmount_days</span><span class="params">(<span class="keyword">double</span> amount, <span class="keyword">int</span> days)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getInterestRate() * amount * days / <span class="number">365</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setInterestRate</span><span class="params">(<span class="keyword">double</span> arg)</span> </span>&#123;</span><br><span class="line">        _type.setInterestRate(arg);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">double</span> <span class="title">getInterestRate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _type.getInterestRate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AccountType</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> _interestRate;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">setInterestRate</span><span class="params">(<span class="keyword">double</span> arg)</span> </span>&#123;</span><br><span class="line">        _interestRate = arg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getInterestRate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _interestRate;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Extract-Class（提炼类）"><a href="#Extract-Class（提炼类）" class="headerlink" title="Extract Class（提炼类）"></a>Extract Class（提炼类）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动机：单类做一件事情</span></span><br><span class="line"><span class="comment"> * 做法：</span></span><br><span class="line"><span class="comment"> *   （1）决定如何分解类所负的责任</span></span><br><span class="line"><span class="comment"> *   （2）建立一个新类，用以表现从旧类中分离出来的责任</span></span><br><span class="line"><span class="comment"> *   （3）建立“从旧类访问新类”的连接关系</span></span><br><span class="line"><span class="comment"> *   （4）对于你想搬移的每一个字段，运用Move Field搬移</span></span><br><span class="line"><span class="comment"> *   （5）每次搬移后，重新编译</span></span><br><span class="line"><span class="comment"> *   （6）将必要函数搬移至新类，从低层函数（被其他函数调用次数&gt;调用其他函数）到高层函数</span></span><br><span class="line"><span class="comment"> *   （7）每次搬移后，重新编译</span></span><br><span class="line"><span class="comment"> *   （8）检查，精简每个类的接口。</span></span><br><span class="line"><span class="comment"> *   （9）决定是否公开新类。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    String _name;</span><br><span class="line">    TelephoneNumber _officeTelephone;</span><br><span class="line">    String _officeAreaCode;</span><br><span class="line">    String _officeNumber;</span><br><span class="line">    <span class="comment">// setter、getter</span></span><br><span class="line">    <span class="function">String <span class="title">getTelephoneNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _officeTelephone.getTelephoneNumber();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">TelephoneNumber <span class="title">getOfficeTelephone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _officeTelephone;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">-&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TelephoneNumber</span> </span>&#123;</span><br><span class="line">    String _areaCode;</span><br><span class="line">    String _number;</span><br><span class="line">    <span class="comment">// setter、getter</span></span><br><span class="line">            <span class="function">String <span class="title">getTelephoneNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">"("</span> + _areaCode + <span class="string">")"</span> + _number);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Inline-Class（将类内联化）"><a href="#Inline-Class（将类内联化）" class="headerlink" title="Inline Class（将类内联化）"></a>Inline Class（将类内联化）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    String _name;</span><br><span class="line">    TelephoneNumber _officeTelephone;</span><br><span class="line">    String _officeAreaCode;</span><br><span class="line">    String _officeNumber;</span><br><span class="line">    <span class="comment">// setter、getter</span></span><br><span class="line">    <span class="function">String <span class="title">getTelephoneNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _officeTelephone.getTelephoneNumber();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">TelephoneNumber <span class="title">getOfficeTelephone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _officeTelephone;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">TelephoneNumber</span> </span>&#123;</span><br><span class="line">        String _areaCode;</span><br><span class="line">        String _number;</span><br><span class="line">        <span class="comment">// setter、getter</span></span><br><span class="line">                <span class="function">String <span class="title">getTelephoneNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> (<span class="string">"("</span> + _areaCode + <span class="string">")"</span> + _number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Hide-Delegate（隐藏“委托关系”）"><a href="#Hide-Delegate（隐藏“委托关系”）" class="headerlink" title="Hide Delegate（隐藏“委托关系”）"></a>Hide Delegate（隐藏“委托关系”）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动机："封装"即使不是对象的最关键特征，也是最关键特征之一。</span></span><br><span class="line"><span class="comment"> * 做法：</span></span><br><span class="line"><span class="comment"> *    （1）对于每一个委托关系中的函数，在服务对象端建立一个简单的委托函数。</span></span><br><span class="line"><span class="comment"> *    （2）调整客户</span></span><br><span class="line"><span class="comment"> *    （3）每次调整后，编译并测试</span></span><br><span class="line"><span class="comment"> *    （4）如果将来不再有任何客户需要取用Delegate，即可移除服务类</span></span><br><span class="line"><span class="comment"> *    （5）编译、测试</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    Department _department;</span><br><span class="line">    <span class="comment">// setter、getter</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Department</span> </span>&#123;</span><br><span class="line">    String _chargeCode;</span><br><span class="line">    Person _manager;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Department</span><span class="params">(Person manager)</span> </span>&#123;</span><br><span class="line">        _manager = manager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">getManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _manager;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">-&gt; manager = john.getDepartment().getManager();</span><br><span class="line">    -&gt; manager = john.getManager();</span><br></pre></td></tr></table></figure>
+<h3 id="Remove-Middle-Man（移除中间人）"><a href="#Remove-Middle-Man（移除中间人）" class="headerlink" title="Remove Middle Man（移除中间人）"></a>Remove Middle Man（移除中间人）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    Department _department;</span><br><span class="line">    <span class="comment">// setter、getter</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Department</span> </span>&#123;</span><br><span class="line">    String _chargeCode;</span><br><span class="line">    Person _manager;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Department</span><span class="params">(Person manager)</span> </span>&#123;</span><br><span class="line">        _manager = manager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">getManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _manager;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Indroduce-Foreign-Method（引入外加函数）"><a href="#Indroduce-Foreign-Method（引入外加函数）" class="headerlink" title="Indroduce Foreign Method（引入外加函数）"></a>Indroduce Foreign Method（引入外加函数）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Date newStart = <span class="keyword">new</span> Date(previous.getYear(), </span><br><span class="line">    previousEnd.getMonth(), previousEnd.getDate() + <span class="number">1</span>);</span><br><span class="line">-&gt;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Date <span class="title">nextDay</span><span class="params">(Date arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Date(arg.getYear(), arg.getMonth(), arg.getDate() + <span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Indroduce-Local-Extension（引入本地扩展）"><a href="#Indroduce-Local-Extension（引入本地扩展）" class="headerlink" title="Indroduce Local Extension（引入本地扩展）"></a>Indroduce Local Extension（引入本地扩展）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动机：很遗憾，类的作者无法预知未来，他们常常没能为你预先准备一些有用的函数。</span></span><br><span class="line"><span class="comment"> * 做法：</span></span><br><span class="line"><span class="comment"> *（1）建立一个扩展类，将它作为原始类的子类或包装类。</span></span><br><span class="line"><span class="comment"> *（2）在扩展中加入转型构造函数。</span></span><br><span class="line"><span class="comment"> *（3）在扩展类中加入新特性</span></span><br><span class="line"><span class="comment"> *（4）根据需要，将原对象替换为扩展对象</span></span><br><span class="line"><span class="comment"> *（5）将针对原始类定义的所有外加函数搬移到扩展中</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java%E8%BF%9B%E9%98%B6/" rel="tag"># Java进阶</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/29/%E9%BD%90%E7%99%BD%E7%9F%B3%E7%9A%84%E6%95%85%E4%BA%8B/" rel="next" title="齐白石的故事">
+                <i class="fa fa-chevron-left"></i> 齐白石的故事
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/31/%E7%AC%AC1%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E6%8C%91%E6%88%98/" rel="prev" title="第1章-并发编程的挑战">
+                第1章-并发编程的挑战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">linestyle</p>
+              <p class="site-description motion-element" itemprop="description">api coder</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#重构原则"><span class="nav-number">1.</span> <span class="nav-text">重构原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码坏味道"><span class="nav-number">2.</span> <span class="nav-text">代码坏味道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构筑测试体系"><span class="nav-number">3.</span> <span class="nav-text">构筑测试体系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重构列表"><span class="nav-number">4.</span> <span class="nav-text">重构列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重新组织函数"><span class="nav-number">5.</span> <span class="nav-text">重新组织函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Extract-Method（提炼函数）"><span class="nav-number">5.1.</span> <span class="nav-text">Extract Method（提炼函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inline-Method（内联函数）"><span class="nav-number">5.2.</span> <span class="nav-text">Inline Method（内联函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inline-Temp（内联临时变量）"><span class="nav-number">5.3.</span> <span class="nav-text">Inline Temp（内联临时变量）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replace-Temp-With-Query（以查询取代临时变量）"><span class="nav-number">5.4.</span> <span class="nav-text">Replace Temp With Query（以查询取代临时变量）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Introduce-Explaing-Variable（引入解释性变量）"><span class="nav-number">5.5.</span> <span class="nav-text">Introduce Explaing Variable（引入解释性变量）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Split-Temporary-Variable（分解临时变量）"><span class="nav-number">5.6.</span> <span class="nav-text">Split Temporary Variable（分解临时变量）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Remove-Assignments-to-Parameters（移除对参数的赋值）"><span class="nav-number">5.7.</span> <span class="nav-text">Remove Assignments to Parameters（移除对参数的赋值）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Substitude-Algorithm（替换算法）"><span class="nav-number">5.8.</span> <span class="nav-text">Substitude Algorithm（替换算法）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在对象之间搬移特性"><span class="nav-number">6.</span> <span class="nav-text">在对象之间搬移特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Move-Method（搬移函数）"><span class="nav-number">6.1.</span> <span class="nav-text">Move Method（搬移函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Move-Field-搬移字段"><span class="nav-number">6.2.</span> <span class="nav-text">Move Field 搬移字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Extract-Class（提炼类）"><span class="nav-number">6.3.</span> <span class="nav-text">Extract Class（提炼类）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inline-Class（将类内联化）"><span class="nav-number">6.4.</span> <span class="nav-text">Inline Class（将类内联化）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hide-Delegate（隐藏“委托关系”）"><span class="nav-number">6.5.</span> <span class="nav-text">Hide Delegate（隐藏“委托关系”）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Remove-Middle-Man（移除中间人）"><span class="nav-number">6.6.</span> <span class="nav-text">Remove Middle Man（移除中间人）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Indroduce-Foreign-Method（引入外加函数）"><span class="nav-number">6.7.</span> <span class="nav-text">Indroduce Foreign Method（引入外加函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Indroduce-Local-Extension（引入本地扩展）"><span class="nav-number">6.8.</span> <span class="nav-text">Indroduce Local Extension（引入本地扩展）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">linestyle</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
