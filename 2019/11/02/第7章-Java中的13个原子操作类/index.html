@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="小故事," />
+  <meta name="keywords" content="Java并发编程的艺术," />
 
 
 
@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="故事讲的是一个村里的两个年轻人。这个村常年缺水，于是这两个年轻人有了一个赚钱的机会，就是通过给村里人去很远的地方提水来赚钱。这是一个很不错的生意，两个年轻人靠这个生活一点问题都没有。有一天青年A就觉得这样做不行，于是他开始想，如果建一条管道，将水源处的水引过来，以后就再也不用靠自己的体力来挣钱了。于是青年A一边用一半的时间继续提水赚钱，另一半的时间用赚到的钱来铺设管道。因为两头都要忙，还要把钱投入">
-<meta name="keywords" content="小故事">
+<meta name="description" content="本章介绍了JDK中并发包里的AtomicInteger、AtomicIntegerArray、AtomicReference、AtomicStampedReference等13个原子操作类以及实现原理。 原子更新基本类型类使用原子的方式更新基本类型，Atomic包提供了以下3个类。  AtomicBoolean：原子更新布尔类型。 AtomicInteger：原子更新整型。 AtomicLong：">
+<meta name="keywords" content="Java并发编程的艺术">
 <meta property="og:type" content="article">
-<meta property="og:title" content="管道的故事">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;29&#x2F;%E7%AE%A1%E9%81%93%E7%9A%84%E6%95%85%E4%BA%8B&#x2F;index.html">
+<meta property="og:title" content="第7章-Java中的13个原子操作类">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;02&#x2F;%E7%AC%AC7%E7%AB%A0-Java%E4%B8%AD%E7%9A%8413%E4%B8%AA%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB&#x2F;index.html">
 <meta property="og:site_name" content="一颗小草">
-<meta property="og:description" content="故事讲的是一个村里的两个年轻人。这个村常年缺水，于是这两个年轻人有了一个赚钱的机会，就是通过给村里人去很远的地方提水来赚钱。这是一个很不错的生意，两个年轻人靠这个生活一点问题都没有。有一天青年A就觉得这样做不行，于是他开始想，如果建一条管道，将水源处的水引过来，以后就再也不用靠自己的体力来挣钱了。于是青年A一边用一半的时间继续提水赚钱，另一半的时间用赚到的钱来铺设管道。因为两头都要忙，还要把钱投入">
+<meta property="og:description" content="本章介绍了JDK中并发包里的AtomicInteger、AtomicIntegerArray、AtomicReference、AtomicStampedReference等13个原子操作类以及实现原理。 原子更新基本类型类使用原子的方式更新基本类型，Atomic包提供了以下3个类。  AtomicBoolean：原子更新布尔类型。 AtomicInteger：原子更新整型。 AtomicLong：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-29T09:29:18.790Z">
+<meta property="og:updated_time" content="2019-11-02T03:03:28.345Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -118,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/10/29/管道的故事/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/11/02/第7章-Java中的13个原子操作类/"/>
 
 
 
 
 
-  <title>管道的故事 | 一颗小草</title>
+  <title>第7章-Java中的13个原子操作类 | 一颗小草</title>
   
 
 
@@ -295,7 +295,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/29/%E7%AE%A1%E9%81%93%E7%9A%84%E6%95%85%E4%BA%8B/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/02/%E7%AC%AC7%E7%AB%A0-Java%E4%B8%AD%E7%9A%8413%E4%B8%AA%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%B1%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="linestyle">
@@ -312,7 +312,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">管道的故事</h1>
+          <h1 class="post-title" itemprop="name headline">第7章-Java中的13个原子操作类</h1>
         
 
         <div class="post-meta">
@@ -324,8 +324,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-29T17:28:49+08:00">
-                2019-10-29
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-02T10:48:30+08:00">
+                2019-11-02
               </time>
             
 
@@ -347,8 +347,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B0%8F%E6%95%85%E4%BA%8B/" itemprop="url" rel="index">
-                    <span itemprop="name">小故事</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -384,7 +384,51 @@
       
 
       
-        <p>故事讲的是一个村里的两个年轻人。<br>这个村常年缺水，于是这两个年轻人有了一个赚钱的机会，就是通过给村里人去很远的地方提水来赚钱。<br>这是一个很不错的生意，两个年轻人靠这个生活一点问题都没有。<br>有一天青年A就觉得这样做不行，于是他开始想，如果建一条管道，将水源处的水引过来，以后就再也不用靠自己的体力来挣钱了。于是青年A一边用一半的时间继续提水赚钱，另一半的时间用赚到的钱来铺设管道。<br>因为两头都要忙，还要把钱投入到铺设管子的的事情上，所以青年A过的很辛苦；<br>青年B觉得这事儿不靠谱，他觉得每天靠自己的提水可以赚到足够多的钱了，于是他继续每天赶着提桶取水的活，收入不错，下班还有时间花钱消遣，生活挺不错。<br>直到有一天，青年A的水管建成了。<br>水源从管子里自动流出来的时候，青年A就不用再花时间花体力自己去提水赚钱了，从那天起他就算在睡觉，也有源源不断的收入。<br>而青年B因为常年的劳动，身体越来越差了，提水的量也开始减少了，收入就越来越少了。</p>
+        <p>本章介绍了JDK中并发包里的AtomicInteger、AtomicIntegerArray、AtomicReference、AtomicStampedReference等13个原子操作类以及实现原理。</p>
+<h2 id="原子更新基本类型类"><a href="#原子更新基本类型类" class="headerlink" title="原子更新基本类型类"></a>原子更新基本类型类</h2><p>使用原子的方式更新基本类型，Atomic包提供了以下3个类。</p>
+<ul>
+<li>AtomicBoolean：原子更新布尔类型。</li>
+<li>AtomicInteger：原子更新整型。</li>
+<li>AtomicLong：原子更新长整型。</li>
+</ul>
+<p>仅以AtomicInteger为例，核心方法：</p>
+<ul>
+<li>int addAndGet（int delta）：以原子方式将输入的数值与实例中的值（AtomicInteger里的value）相加，并返回结果。</li>
+<li>boolean compareAndSet（int expect，int update）：如果输入的数值等于预期值，则以原子方式将该值设置为输入的值。</li>
+<li>int getAndIncrement()：以原子方式将当前值加1，注意，这里返回的是自增前的值。</li>
+<li>void lazySet（int newValue）：最终会设置成newValue，使用lazySet设置值后，可能导致其他线程在之后的一小段时间内还是可以读到旧的值。</li>
+<li>int getAndSet（int newValue）：以原子方式设置为newValue的值，并返回旧值。<figure class="highlight java"><figcaption><span>[案例]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerTest</span> </span>&#123;</span><br><span class="line">	<span class="keyword">static</span> AtomicInteger ai = <span class="keyword">new</span> AtomicInteger(<span class="number">1</span>);</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		System.out.println(ai.getAndIncrement());</span><br><span class="line">		System.out.println(ai.get());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><figcaption><span>[Unsafe的源码]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果当前数值是expected，则原子的将Java变量更新成x</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 如果更新成功则返回true</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapObject</span><span class="params">(Object o,</span></span></span><br><span class="line"><span class="function"><span class="params">												 <span class="keyword">long</span> offset,</span></span></span><br><span class="line"><span class="function"><span class="params">												 Object expected,</span></span></span><br><span class="line"><span class="function"><span class="params">												 Object x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object o, <span class="keyword">long</span> offset,</span></span></span><br><span class="line"><span class="function"><span class="params">											  <span class="keyword">int</span> expected,</span></span></span><br><span class="line"><span class="function"><span class="params">											  <span class="keyword">int</span> x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapLong</span><span class="params">(Object o, <span class="keyword">long</span> offset,</span></span></span><br><span class="line"><span class="function"><span class="params">											   <span class="keyword">long</span> expected,</span></span></span><br><span class="line"><span class="function"><span class="params">											   <span class="keyword">long</span> x)</span></span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="原子更新数组"><a href="#原子更新数组" class="headerlink" title="原子更新数组"></a>原子更新数组</h2><p>通过原子的方式更新数组里的某个元素，Atomic包提供了以下4个类。</p>
+<ul>
+<li>AtomicIntegerArray：原子更新整型数组里的元素。</li>
+<li>AtomicLongArray：原子更新长整型数组里的元素。</li>
+<li>AtomicReferenceArray：原子更新引用类型数组里的元素。<ul>
+<li>int addAndGet（int i，int delta）：以原子方式将输入值与数组中索引i的元素相加。</li>
+<li>boolean compareAndSet（int i，int expect，int update）：如果当前值等于预期值，则以原子方式将数组位置i的元素设置成update值。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><figcaption><span>[案例]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerArrayTest</span> </span>&#123;</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">int</span>[] value = <span class="keyword">new</span> <span class="keyword">int</span>[] &#123; <span class="number">1</span>， <span class="number">2</span> &#125;;</span><br><span class="line">	<span class="keyword">static</span> AtomicIntegerArray ai = <span class="keyword">new</span> AtomicIntegerArray(value);</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ai.getAndSet(<span class="number">0</span>， <span class="number">3</span>);</span><br><span class="line">		System.out.println(ai.get(<span class="number">0</span>));</span><br><span class="line">		System.out.println(value[<span class="number">0</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原子更新引用类型"><a href="#原子更新引用类型" class="headerlink" title="原子更新引用类型"></a>原子更新引用类型</h2><p>原子更新基本类型的AtomicInteger，只能更新一个变量，如果要原子更新多个变量，就需要使用这个原子更新引用类型提供的类。Atomic包提供了以下3个类。</p>
+<ul>
+<li>AtomicReference：原子更新引用类型。</li>
+<li>AtomicReferenceFieldUpdater：原子更新引用类型里的字段。</li>
+<li>AtomicMarkableReference：原子更新带有标记位的引用类型。</li>
+</ul>
+<figure class="highlight java"><figcaption><span>[案例]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicReferenceTest</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> AtomicReference&lt;user&gt; atomicUserRef = <span class="keyword">new</span></span><br><span class="line">		AtomicReference&lt;user&gt;();</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		User user = <span class="keyword">new</span> User(<span class="string">"conan"</span>， <span class="number">15</span>);</span><br><span class="line">		atomicUserRef.set(user);</span><br><span class="line">		User updateUser = <span class="keyword">new</span> User(<span class="string">"Shinichi"</span>， <span class="number">17</span>);</span><br><span class="line">		atomicUserRef.compareAndSet(user， updateUser);</span><br><span class="line">		System.out.println(atomicUserRef.get().getName());</span><br><span class="line">		System.out.println(atomicUserRef.get().getOld());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">int</span> old;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name， <span class="keyword">int</span> old)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.old = old;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> name;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> old;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原子更新字段类"><a href="#原子更新字段类" class="headerlink" title="原子更新字段类"></a>原子更新字段类</h2><p>如果需原子地更新某个类里的某个字段时，就需要使用原子更新字段类，Atomic包提供了以下3个类进行原子字段更新。</p>
+<ul>
+<li>AtomicIntegerFieldUpdater：原子更新整型的字段的更新器。</li>
+<li>AtomicLongFieldUpdater：原子更新长整型字段的更新器。</li>
+<li>AtomicStampedReference：原子更新带有版本号的引用类型。</li>
+</ul>
+<figure class="highlight java"><figcaption><span>[案例]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicIntegerFieldUpdaterTest</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 创建原子更新器，并设置需要更新的对象类和对象的属性</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> AtomicIntegerFieldUpdater&lt;User&gt; a = AtomicIntegerFieldUpdater.</span><br><span class="line">		newUpdater(User.class， "old");</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 设置柯南的年龄是10岁</span></span><br><span class="line">		User conan = <span class="keyword">new</span> User(<span class="string">"conan"</span>， <span class="number">10</span>);</span><br><span class="line">		<span class="comment">// 柯南长了一岁，但是仍然会输出旧的年龄</span></span><br><span class="line">		System.out.println(a.getAndIncrement(conan));</span><br><span class="line">		<span class="comment">// 输出柯南现在的年龄</span></span><br><span class="line">		System.out.println(a.get(conan));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String name;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">int</span> old;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name， <span class="keyword">int</span> old)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.name = name;</span><br><span class="line">			<span class="keyword">this</span>.old = old;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> name;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOld</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> old;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -402,7 +446,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E5%B0%8F%E6%95%85%E4%BA%8B/" rel="tag"># 小故事</a>
+            <a href="/tags/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/" rel="tag"># Java并发编程的艺术</a>
           
         </div>
       
@@ -415,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/29/%E9%81%97%E5%A4%B1%E7%9A%84%E6%99%BA%E6%85%A7/" rel="next" title="遗失的智慧">
-                <i class="fa fa-chevron-left"></i> 遗失的智慧
+              <a href="/2019/11/02/%E7%AC%AC6%E7%AB%A0-Java%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E5%92%8C%E6%A1%86%E6%9E%B6/" rel="next" title="第6章-Java并发容器和框架">
+                <i class="fa fa-chevron-left"></i> 第6章-Java并发容器和框架
               </a>
             
           </div>
@@ -424,10 +468,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/29/%E6%B3%A5%E7%93%A6%E5%8C%A0%E7%9A%84%E6%95%85%E4%BA%8B/" rel="prev" title="泥瓦匠的故事">
-                泥瓦匠的故事 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -479,8 +519,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -540,6 +589,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原子更新基本类型类"><span class="nav-number">1.</span> <span class="nav-text">原子更新基本类型类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原子更新数组"><span class="nav-number">2.</span> <span class="nav-text">原子更新数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原子更新引用类型"><span class="nav-number">3.</span> <span class="nav-text">原子更新引用类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原子更新字段类"><span class="nav-number">4.</span> <span class="nav-text">原子更新字段类</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
