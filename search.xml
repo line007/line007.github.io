@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>二进制转换</title>
+    <url>/2019/11/02/%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<h2 id="关于二进制说明"><a href="#关于二进制说明" class="headerlink" title="关于二进制说明"></a>关于二进制说明</h2><p>对于整数，有四种表达方式：</p>
+<ul>
+<li>二进制：0,1，满2进1. 以0b或0B开头</li>
+<li>十进制：0-9，满10进1. </li>
+<li>八进制：0-7，满8进1. 以数字0开头表示。</li>
+<li>十六进制：0-9及A-F，满16进1. 以0x或者0X开头表示。（A-F不区分大小写）</li>
+</ul>
+<p><img src="/images/tools20191102001.png" alt="Alt text"><br><img src="/images/tools20191102002.png" alt="Alt text"></p>
+<h2 id="二进制转十进制（底层存储的是补码）"><a href="#二进制转十进制（底层存储的是补码）" class="headerlink" title="二进制转十进制（底层存储的是补码）"></a>二进制转十进制（底层存储的是补码）</h2><p><img src="/images/tools20191102003.png" alt="Alt text"><br>负数的补码:<br><img src="/images/tools20191102004.png" alt="Alt text"></p>
+<h2 id="十进制转二进制"><a href="#十进制转二进制" class="headerlink" title="十进制转二进制"></a>十进制转二进制</h2><p><img src="/images/tools20191102005.png" alt="Alt text"></p>
+<h2 id="二进制转十进制、十六进制"><a href="#二进制转十进制、十六进制" class="headerlink" title="二进制转十进制、十六进制"></a>二进制转十进制、十六进制</h2><p><img src="/images/tools20191102006.png" alt="Alt text"><br><img src="/images/tools20191102007.png" alt="Alt text"></p>
+<h2 id="位移运算"><a href="#位移运算" class="headerlink" title="位移运算"></a>位移运算</h2><p>右移运算符、左移运算符号，以右移为例（带符号与不带符号）.<br><img src="/images/tools20191102008.png" alt="Alt text"></p>
+<h2 id="位与运算、位或运算"><a href="#位与运算、位或运算" class="headerlink" title="位与运算、位或运算"></a>位与运算、位或运算</h2><p><img src="/images/tools20191102009.png" alt="Alt text"></p>
+<h2 id="异或运算、取反"><a href="#异或运算、取反" class="headerlink" title="异或运算、取反"></a>异或运算、取反</h2><p><img src="/images/tools20191102010.png" alt="Alt text"><br><img src="/images/tools20191102011.png" alt="Alt text"></p>
+<p>案例：<br><img src="/images/tools20191102012.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第6章-类文件结构</title>
     <url>/2019/11/02/%E7%AC%AC6%E7%AB%A0-%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</url>
     <content><![CDATA[<p>本章详细讲解了Class文件中的各个组成部分，以及每个部分的定义、数据结构和使用方法。以实战的方式演示了Class的数据是如何电存储和访问的。</p>
@@ -1354,5 +1380,8 @@
       <categories>
         <category>工具</category>
       </categories>
+      <tags>
+        <tag>工具</tag>
+      </tags>
   </entry>
 </search>
