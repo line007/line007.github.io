@@ -91,7 +91,12 @@
 <li>异常处理指令</li>
 </ol>
 <ul>
-<li>虚拟机异常由athrow指令来实现<br>10 同步指令</li>
+<li>虚拟机异常由athrow指令来实现</li>
+</ul>
+<ol start="10">
+<li>同步指令</li>
+</ol>
+<ul>
 <li>作用：支持同步和方法内部一段指令序列的同步</li>
 </ul>
 <h2 id="公有设计和私有实现"><a href="#公有设计和私有实现" class="headerlink" title="公有设计和私有实现"></a>公有设计和私有实现</h2><p><img src="/images/jvm20190074.png" alt="Alt text"></p>
