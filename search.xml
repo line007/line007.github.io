@@ -1,6 +1,448 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第6章-类文件结构</title>
+    <url>/2019/11/02/%E7%AC%AC6%E7%AB%A0-%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</url>
+    <content><![CDATA[<p>本章详细讲解了Class文件中的各个组成部分，以及每个部分的定义、数据结构和使用方法。以实战的方式演示了Class的数据是如何电存储和访问的。</p>
+<h2 id="无关性的基石"><a href="#无关性的基石" class="headerlink" title="无关性的基石"></a>无关性的基石</h2><ul>
+<li>一次编译，到处运行（跨平台）</li>
+<li>虚拟机和字节码存储格式</li>
+<li>不关心Class的来源何种语言。</li>
+</ul>
+<p><img src="/images/jvm20190053.png" alt="Alt text"></p>
+<h2 id="Class文件的结构"><a href="#Class文件的结构" class="headerlink" title="Class文件的结构"></a>Class文件的结构</h2><p>任何一个Class文件都对应着唯一一个类或接口的定义信息，但反过来说，类或接口并不一定都得定义在文件里。Class文件是一组以8位字节为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在Class文件中，中间没有任何分隔符。</p>
+<h3 id="魔数与Class文件的版本"><a href="#魔数与Class文件的版本" class="headerlink" title="魔数与Class文件的版本"></a>魔数与Class文件的版本</h3><p>魔数（0xCAFEBABE）：每个Class文件的头4个字节。<br>作用（基于安全考虑）：确定这个文件是否为一个能被虚拟机接受的Class文件。<br><img src="/images/jvm20190054.png" alt="Alt text"></p>
+<h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><p>可以理解为Class文件中的资源仓库。<br>位置：主次版本号之后。<br>存放内容：</p>
+<ul>
+<li>字面量：接近Java语言层面的常量概念，如：文本字符串、声明为final的常量值等</li>
+<li>符号引用（编译原理方面的概念）：<ul>
+<li>类和接口的全限定名</li>
+<li>字段的名称和描述符</li>
+<li>方法的名称和描述符<br><img src="/images/jvm20190055.png" alt="Alt text"><br><img src="/images/jvm20190056.png" alt="Alt text"></li>
+</ul>
+</li>
+</ul>
+<h3 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h3><p>位置：在常量池结束之后。<br><img src="/images/jvm20190057.png" alt="Alt text"><br><img src="/images/jvm20190058.png" alt="Alt text"></p>
+<h3 id="类索引、父类索引与接口索引"><a href="#类索引、父类索引与接口索引" class="headerlink" title="类索引、父类索引与接口索引"></a>类索引、父类索引与接口索引</h3><p>用于描述接口或者类中声明的变量，严格顺序、长度和内容。<br>作用：通过这三项数据来确定这个类的继承关系。<br><img src="/images/jvm20190059.png" alt="Alt text"></p>
+<h3 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h3><p>用于描述接口或者类中声明的变量，严格顺序、长度和内容。<br>包含内容：作用域、可变性、并发可见性、字段类型等。<br><img src="/images/jvm20190060.png" alt="Alt text"></p>
+<h3 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h3><p>与字段表集合一样。</p>
+<h3 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h3><p><img src="/images/jvm20190061.png" alt="Alt text"></p>
+<h4 id="code属性"><a href="#code属性" class="headerlink" title="code属性"></a>code属性</h4><p><img src="/images/jvm20190062.png" alt="Alt text"></p>
+<h4 id="Exception属性"><a href="#Exception属性" class="headerlink" title="Exception属性"></a>Exception属性</h4><p>列举出方法中可能抛出的受检查异常。<br><img src="/images/jvm20190063.png" alt="Alt text"></p>
+<h4 id="LineNumberTable属性（非必需属性）"><a href="#LineNumberTable属性（非必需属性）" class="headerlink" title="LineNumberTable属性（非必需属性）"></a>LineNumberTable属性（非必需属性）</h4><p>用于描述Java源码行号和字节行号之间的对应关系。<br><img src="/images/jvm20190064.png" alt="Alt text"></p>
+<h4 id="LocalVariableTable属性（非必需属性）"><a href="#LocalVariableTable属性（非必需属性）" class="headerlink" title="LocalVariableTable属性（非必需属性）"></a>LocalVariableTable属性（非必需属性）</h4><p>描述栈中局部变量表中的变量与Java源码中定义的变量之间的关系。<br><img src="/images/jvm20190065.png" alt="Alt text"></p>
+<h3 id="SourceFile属性"><a href="#SourceFile属性" class="headerlink" title="SourceFile属性"></a>SourceFile属性</h3><p>记录生成这个Class文件的源码文件名称。<br><img src="/images/jvm20190066.png" alt="Alt text"></p>
+<h3 id="ConstantValue属性（static修饰的变量）"><a href="#ConstantValue属性（static修饰的变量）" class="headerlink" title="ConstantValue属性（static修饰的变量）"></a>ConstantValue属性（static修饰的变量）</h3><p>作用：通知虚拟机自动为静态变量赋值。<br><img src="/images/jvm20190067.png" alt="Alt text"></p>
+<h3 id="InnerClass属性"><a href="#InnerClass属性" class="headerlink" title="InnerClass属性"></a>InnerClass属性</h3><p>记录内部类与宿主类之间的关联。<br><img src="/images/jvm20190068.png" alt="Alt text"></p>
+<h3 id="Deprecated及Synthetic属性"><a href="#Deprecated及Synthetic属性" class="headerlink" title="Deprecated及Synthetic属性"></a>Deprecated及Synthetic属性</h3><p>标志类型的布尔属性，只存在有和没有的区别。<br><img src="/images/jvm20190069.png" alt="Alt text"></p>
+<h3 id="StackMapTable属性"><a href="#StackMapTable属性" class="headerlink" title="StackMapTable属性"></a>StackMapTable属性</h3><p>代替原本基于类型推断的字节码验证器，提升字节码验证的性能。<br><img src="/images/jvm20190070.png" alt="Alt text"></p>
+<h3 id="Signature属性"><a href="#Signature属性" class="headerlink" title="Signature属性"></a>Signature属性</h3><p>记录泛型签名信息。<br><img src="/images/jvm20190071.png" alt="Alt text"></p>
+<h3 id="BootstrapMethods属性（略）"><a href="#BootstrapMethods属性（略）" class="headerlink" title="BootstrapMethods属性（略）"></a>BootstrapMethods属性（略）</h3><p><img src="/images/jvm20190072.png" alt="Alt text"></p>
+<h2 id="字节码指令简介"><a href="#字节码指令简介" class="headerlink" title="字节码指令简介"></a>字节码指令简介</h2><p><img src="/images/jvm20190073.png" alt="Alt text"></p>
+<ol>
+<li>字节码与数据类型</li>
+</ol>
+<ul>
+<li>使用：简化操作记忆，如：i-&gt;int等</li>
+</ul>
+<ol start="2">
+<li>加载和存储指令</li>
+</ol>
+<ul>
+<li>使用场景：用于将数据在栈帧中的局部变量表和操作数栈之间来回传输</li>
+</ul>
+<ol start="3">
+<li>运算指令</li>
+</ol>
+<ul>
+<li>作用：对两个操作数栈上的值进行特定运算。</li>
+<li>分类：<ul>
+<li>对整型数据进行运算</li>
+<li>对浮点型数据进行运算</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li>类型转换指令</li>
+</ol>
+<ul>
+<li>作用：将两种不同的数值类型进行相互转换</li>
+</ul>
+<ol start="5">
+<li>对象创建与访问指令</li>
+</ol>
+<ul>
+<li>使用场景：虚拟机对实例和数组的创建与操作使用了不同的字节码命令。</li>
+</ul>
+<ol start="6">
+<li>操作数栈管理指令</li>
+</ol>
+<ul>
+<li>常用直接操作数栈的指令：pop1、pop2等</li>
+</ul>
+<ol start="7">
+<li>控制转移指令</li>
+</ol>
+<ul>
+<li>作用：从指定位置指令继续执行程序</li>
+</ul>
+<ol start="8">
+<li>方法调用和返回指令（略）</li>
+<li>异常处理指令</li>
+</ol>
+<ul>
+<li>虚拟机异常由athrow指令来实现<br>10 同步指令</li>
+<li>作用：支持同步和方法内部一段指令序列的同步</li>
+</ul>
+<h2 id="公有设计和私有实现"><a href="#公有设计和私有实现" class="headerlink" title="公有设计和私有实现"></a>公有设计和私有实现</h2><p><img src="/images/jvm20190074.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第5章-调优安全分析与实战</title>
+    <url>/2019/11/02/%E7%AC%AC5%E7%AB%A0-%E8%B0%83%E4%BC%98%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90%E4%B8%8E%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[<p>本章介绍了几个虚拟机真实案例并以这些案例来分析问题、解决问题的过程和eclipse优化配置。</p>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><h3 id="高性能硬件上的程序部署策略"><a href="#高性能硬件上的程序部署策略" class="headerlink" title="高性能硬件上的程序部署策略"></a>高性能硬件上的程序部署策略</h3><p><img src="/images/jvm20190039.png" alt="Alt text"><br>解决方案：</p>
+<ul>
+<li>建立5个32位JDK的逻辑集群</li>
+<li>第个进程按2GB内存计算（其中堆固定为1.5G），占用了10G内存</li>
+<li>另外建立一个Apache服务作为前端均衡代理访问门户。</li>
+<li>响应速度：以为CMS收集器进行垃圾回收。</li>
+</ul>
+<h3 id="集群间同步导致的内存溢出"><a href="#集群间同步导致的内存溢出" class="headerlink" title="集群间同步导致的内存溢出"></a>集群间同步导致的内存溢出</h3><p><img src="/images/jvm20190040.png" alt="Alt text"><br>解决方案（无解）：</p>
+<ul>
+<li>让服务器带着参数：+HeapDumpOnOutOfMemoryError运行</li>
+</ul>
+<h3 id="堆外内存导致的溢出错误"><a href="#堆外内存导致的溢出错误" class="headerlink" title="堆外内存导致的溢出错误"></a>堆外内存导致的溢出错误</h3><p><img src="/images/jvm20190041.png" alt="Alt text"><br><img src="/images/jvm20190042.png" alt="Alt text"><br>解决方案：</p>
+<ul>
+<li>Direct Memory：-XX:MaxDirectMemorySize调用直接内存大小</li>
+<li>线程堆栈：-Xss调整大小</li>
+<li>Socket缓存区</li>
+<li>JNI代码</li>
+<li>虚拟机和GC</li>
+</ul>
+<h3 id="外部命令导致系统缓慢"><a href="#外部命令导致系统缓慢" class="headerlink" title="外部命令导致系统缓慢"></a>外部命令导致系统缓慢</h3><p><img src="/images/jvm20190043.png" alt="Alt text"><br>问题原因：linux产生频繁产生新进程（”fork”系统调用）<br>解决方案：</p>
+<ul>
+<li>Runtime().getRuntime().exec() 调用shell脚本<ul>
+<li>克隆一个和当前虚拟机拥有一样环境变量的进程</li>
+<li>再用这个新的进程去执行外部命令</li>
+<li>最后退出这个进程。</li>
+</ul>
+</li>
+<li>去掉这个Runtime().getRuntime().exec() Shell脚本执行的语句</li>
+<li>改为用Java的API去获取这些信息</li>
+</ul>
+<h3 id="服务器JVM进程崩溃"><a href="#服务器JVM进程崩溃" class="headerlink" title="服务器JVM进程崩溃"></a>服务器JVM进程崩溃</h3><p><img src="/images/jvm20190044.png" alt="Alt text"><br><img src="/images/jvm20190045.png" alt="Alt text"><br>问题：MIS系统使用了异步调用Web服务通知OA系统，长期以往导致等待线程和Socket连接越来越多，直到崩溃。<br>解决方案：</p>
+<ul>
+<li>通知OA门户方修复无法使用的集成接口</li>
+<li>并将异步调用改为生产者/消费都模式的消息队列实现</li>
+</ul>
+<h3 id="不恰当数据结构导致内存占用过大"><a href="#不恰当数据结构导致内存占用过大" class="headerlink" title="不恰当数据结构导致内存占用过大"></a>不恰当数据结构导致内存占用过大</h3><p><img src="/images/jvm20190046.png" alt="Alt text"><br>问题：使用了大对象，导致GC Parnew（复制算法）无法回收。<br>解决方案：</p>
+<ul>
+<li>不修改程序（治标不治本）：将Survivor去掉，加入-XX: SurvirorRatio=65536、-XX: MaxTenuringThreshold=0或-XX: AlwaysTenure</li>
+<li>修改程序：？</li>
+</ul>
+<h3 id="由Window虚拟内存导致的长时间停顿"><a href="#由Window虚拟内存导致的长时间停顿" class="headerlink" title="由Window虚拟内存导致的长时间停顿"></a>由Window虚拟内存导致的长时间停顿</h3><p><img src="/images/jvm20190047.png" alt="Alt text"><br>解决步骤：</p>
+<ol>
+<li>加入参数：-XX: +PrintGCApplicationStoppedTime -XX: PringGCDateStamps - Xloggc: gclog.log<br><img src="/images/jvm20190048.png" alt="Alt text"></li>
+<li>加入参数：-XX: +PrintReferenceGC参数<br><img src="/images/jvm20190049.png" alt="Alt text"></li>
+</ol>
+<h2 id="Eclipse运行速度调优"><a href="#Eclipse运行速度调优" class="headerlink" title="Eclipse运行速度调优"></a>Eclipse运行速度调优</h2><h3 id="升级JDK1-6的性能变化及兼容问题"><a href="#升级JDK1-6的性能变化及兼容问题" class="headerlink" title="升级JDK1.6的性能变化及兼容问题"></a>升级JDK1.6的性能变化及兼容问题</h3><p>在eclipse.ini文件配置参数：-XX: MaxPermSize=256M</p>
+<h3 id="编译时间和类加载时间的优化"><a href="#编译时间和类加载时间的优化" class="headerlink" title="编译时间和类加载时间的优化"></a>编译时间和类加载时间的优化</h3><p>配置参数：-Xverify: none，禁止掉字节码验证过程。<br><img src="/images/jvm20190050.png" alt="Alt text"></p>
+<h3 id="调整内存设置控制垃圾收集频率"><a href="#调整内存设置控制垃圾收集频率" class="headerlink" title="调整内存设置控制垃圾收集频率"></a>调整内存设置控制垃圾收集频率</h3><p>把-Xms和-XX:PermSize设置为-Xmx和-MaxPermSize参数值一样（避免运行自动扩容）。<br>优化方案：</p>
+<ul>
+<li>把新生代容量提升到128M，避免新生代频繁GC</li>
+<li>把Java堆、永久代的容量分别固定为512M、96M，避免内存扩展<br><img src="/images/jvm20190051.png" alt="Alt text"></li>
+</ul>
+<h3 id="选择收集器降低延迟"><a href="#选择收集器降低延迟" class="headerlink" title="选择收集器降低延迟"></a>选择收集器降低延迟</h3><p>改用ParNew和CMS收集器来收集新生代、老年代。<br><img src="/images/jvm20190052.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第4章-虚拟机性能监控与故障处理工具</title>
+    <url>/2019/11/02/%E7%AC%AC4%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%B8%8E%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>介绍了随JDK发布的6个命令行工具及两个可视化的故障处理工具，灵活使用这些工具可以给问题处理带来很大的便利。</p>
+<h2 id="JDK的命令行工具"><a href="#JDK的命令行工具" class="headerlink" title="JDK的命令行工具"></a>JDK的命令行工具</h2><h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p>命令： jps[options][hostid]</p>
+<h3 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h3><p>虚拟机统计信息监视工具。<br>显示信息：类装载、内存、垃圾收集、JIT编译等运行数据<br>本地命令：jstat[option vmid[interval [s | ms][count]]]<br>远程命令：[protocol: ][//]lvmid[@hostname[:port]/servername]<br><img src="/images/jvm20190025.png" alt="Alt text"></p>
+<p>案例：<br><img src="/images/jvm20190026.png" alt="Alt text"></p>
+<h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p>Java配置信息工具。<br>作用：实时查看和调整虚拟机各项参数。<br>命令：jinfo[option]pid<br>案例：<br><img src="/images/jvm20190027.png" alt="Alt text"></p>
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><p>Java内存映像工具。<br>作用：</p>
+<ul>
+<li>用于生成堆转储快照（headump或dump文件）</li>
+<li>可以查询finalize执行队列、Java堆和永久代的详细信息（空间使用率、当前用的哪种收集器等）</li>
+</ul>
+<p>命令：jmap[option]vmid<br><img src="/images/jvm20190028.png" alt="Alt text"><br>案例：<br><img src="/images/jvm20190029.png" alt="Alt text"></p>
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><p>虚拟机堆转存储快照分析工具，与jmap搭配使用。<br><img src="/images/jvm20190030.png" alt="Alt text"></p>
+<h3 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h3><p>Java堆栈跟踪工具。<br>作用：用于生成虚拟机当前时刻的线程快照（threadump、javacore文件）。<br>命令：jstack[option]vmid<br><img src="/images/jvm20190031.png" alt="Alt text"><br>案例：<br><img src="/images/jvm20190032.png" alt="Alt text"></p>
+<h2 id="JDK可视化工具"><a href="#JDK可视化工具" class="headerlink" title="JDK可视化工具"></a>JDK可视化工具</h2><p>JConsole和VisualVM。</p>
+<h3 id="JConsole"><a href="#JConsole" class="headerlink" title="JConsole"></a>JConsole</h3><p>Java监视与管理控制台，是一种基于JMX的可视化监视、管理工具。</p>
+<ol>
+<li><p>启动JConsole<br>$ JDK/bin jconsole.exe<br><img src="/images/jvm20190033.png" alt="Alt text"></p>
+</li>
+<li><p>内存监控<br><img src="/images/jvm20190034.png" alt="Alt text"></p>
+</li>
+</ol>
+<h3 id="VisualVM"><a href="#VisualVM" class="headerlink" title="VisualVM"></a>VisualVM</h3><p>多合故障处理工具，是到目前为止随JDK发布的功能最强大的运行监视和故障处理程序。<br>优点：</p>
+<ul>
+<li>不需要被监视的程序基于特殊的Agen运行</li>
+<li>可以做插件扩展（jps、jinfo、dump-jmap、jhat）</li>
+<li>离线快照</li>
+<li>有很强的向下兼容能力（JDK1.4.2）</li>
+</ul>
+<ol>
+<li><p>插件安装<br><img src="/images/jvm20190035.png" alt="Alt text"></p>
+</li>
+<li><p>生成、浏览堆转储快照</p>
+</li>
+</ol>
+<ul>
+<li>应用程序-&gt;右键-&gt;堆dump</li>
+<li>应用程序-&gt;双击-&gt;监视-&gt;堆dump</li>
+</ul>
+<ol start="3">
+<li>分析程序性能</li>
+<li>Btrace动态日志跟踪</li>
+</ol>
+<ul>
+<li>Btrace是一个很有趣的VisualVM插件，可以独立运行。</li>
+<li>作用：在不停止目标程序运行的前提下，通过HotSpot虚拟机的HotSwap技术动态加入原本并不存在的调试代码。</li>
+</ul>
+<p><img src="/images/jvm20190036.png" alt="Alt text"><br><img src="/images/jvm20190037.png" alt="Alt text"><br><img src="/images/jvm20190038.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第3章-垃圾收集器与内存分配策略</title>
+    <url>/2019/11/02/%E7%AC%AC3%E7%AB%A0-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</url>
+    <content><![CDATA[<p>本章介绍了垃圾收集的算法，几款JDK1.7中的垃圾收集器特点以及动作原理。通过代码验证实例验证了Java虚拟机中自动分配及回收的主要规则。</p>
+<p>哪些内存需要回收？什么时候回收？如何回收？</p>
+<h2 id="对象已死吗"><a href="#对象已死吗" class="headerlink" title="对象已死吗"></a>对象已死吗</h2><h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h3><p>给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值加1，失效计数器就减1。<br>弊端：它很难解决对象之间相互循环引用的问题</p>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>通过一系列的“GCRoots“的对象作为起点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GCRoots没有任何引用链相连时，则证明此对象是不可用的。<br>GCRoots对象包括：</p>
+<ul>
+<li>虚拟机栈中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法中JNI引用的对象</li>
+</ul>
+<p><img src="/images/jvm20190005.png" alt="Alt text"></p>
+<h3 id="引用类型"><a href="#引用类型" class="headerlink" title="引用类型"></a>引用类型</h3><ul>
+<li>强引用（Object obj = new Object()）</li>
+<li>软引用（SoftReference类）</li>
+<li>弱引用（WeakReference类）</li>
+<li>虚引用（PhantomReference类）</li>
+</ul>
+<h3 id="标记对象死亡"><a href="#标记对象死亡" class="headerlink" title="标记对象死亡"></a>标记对象死亡</h3><p>第一次标记：进行可达性分析后发现没有GC Roots。<br>第二次标记：是否需要执行finalize()方法，需要则放F-Queue队列-&gt;Finalizer线程去执行（用try-finnaly替代finalizer()方法）。</p>
+<h3 id="回收方法区"><a href="#回收方法区" class="headerlink" title="回收方法区"></a>回收方法区</h3><ul>
+<li>永久代回收内容<ul>
+<li>废弃容量</li>
+<li>无用的类</li>
+</ul>
+</li>
+<li>无用的类<ul>
+<li>该类所有的实例都已经被回收</li>
+<li>加载该类的ClassLoader已经被回收</li>
+<li>该类对应的java.lang.Class对象没有在任何地方被引用</li>
+</ul>
+</li>
+<li>配置参数：-verbose: class -XX:+TraceClassLoading、-XX:+TraceClassUnLoading</li>
+</ul>
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p><img src="/images/jvm20190006.png" alt="Alt text"></p>
+<h3 id="复制算法示意图"><a href="#复制算法示意图" class="headerlink" title="复制算法示意图"></a>复制算法示意图</h3><p><img src="/images/jvm20190007.png" alt="Alt text"></p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p><img src="/images/jvm20190008.png" alt="Alt text"></p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><ul>
+<li>新生代：复制算法</li>
+<li>老年代：标记-清理或者标记-整理</li>
+</ul>
+<h2 id="HotSpot的算法实现"><a href="#HotSpot的算法实现" class="headerlink" title="HotSpot的算法实现"></a>HotSpot的算法实现</h2><ol>
+<li><p>枚举根节点<br>一组称为OopMap的数据结构，在类加载完成时，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，在JTI编译过程中，也会在特定的位置记录下栈和寄存器中哪些位置是引用。</p>
+</li>
+<li><p>安全点<br>HotSpot没有为每条指令都生成OopMap，只是在特定的位置记录了这些信息，这些位置称为安全点。<br>选定标准：是否具有让程序长时间执行（指令序列复用）的特征<br>确保GC发生时所有线程都”跑“到最近的安全点上再停顿下来。<br>存在问题：当程序”不执行“时，无法响应JVM的中断请求？</p>
+</li>
+<li><p>安全区域<br>是指在一段代码片段之中，引用关系不会发生变化。<br><img src="/images/jvm20190009.png" alt="Alt text"></p>
+</li>
+</ol>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p>收集算法是内存回收的方法论，垃圾收集器就是内存回收的具体实现。<br><img src="/images/jvm20190010.png" alt="Alt text"></p>
+<h3 id="Serial收集器（单线程收集器）"><a href="#Serial收集器（单线程收集器）" class="headerlink" title="Serial收集器（单线程收集器）"></a>Serial收集器（单线程收集器）</h3><p>最基本、发展历史最悠久的收集器。<br>优点：简单而高效。<br>缺点：停顿时间长。<br><img src="/images/jvm20190011.png" alt="Alt text"></p>
+<h3 id="ParNew收集器（Serial多线程版本）"><a href="#ParNew收集器（Serial多线程版本）" class="headerlink" title="ParNew收集器（Serial多线程版本）"></a>ParNew收集器（Serial多线程版本）</h3><p>特征：</p>
+<ul>
+<li>Serial收集器所有参数（收集算法、Stop The World等）</li>
+<li>除Serial收集器外，只有它能与CMS收集器配合工作</li>
+<li>新生代收集器<br><img src="/images/jvm20190012.png" alt="Alt text"></li>
+</ul>
+<h3 id="Parallel-Scavenge收集器"><a href="#Parallel-Scavenge收集器" class="headerlink" title="Parallel Scavenge收集器"></a>Parallel Scavenge收集器</h3><p>是一个新生收集器，它是使用复制算法的收集器，又是并行的多线程收集器。<br>目标：达到一个可控制的吞吐量（吞吐量=运行用户代码时间/运行时间+垃圾收集时间）<br>配置参数：-XX: MaxGCPauseMillis、-XX: GCTimeRatio</p>
+<h3 id="Serial-Old收集器"><a href="#Serial-Old收集器" class="headerlink" title="Serial Old收集器"></a>Serial Old收集器</h3><p>Serial收集器的老年代版本，单线程和“标记-整理”算法。<br>作用：</p>
+<ul>
+<li>JDK1.5以及之间版本与Parallel Scavenge收集器搭配使用</li>
+<li>作为CMS收集器的后备预案</li>
+</ul>
+<p><img src="/images/jvm20190013.png" alt="Alt text"></p>
+<h3 id="Parallel-Old收集器（JDK1-6中才开始使用）"><a href="#Parallel-Old收集器（JDK1-6中才开始使用）" class="headerlink" title="Parallel Old收集器（JDK1.6中才开始使用）"></a>Parallel Old收集器（JDK1.6中才开始使用）</h3><p>Parallel Scavenge收集器的老年代版本，多线程和“标记-整理”算法。<br><img src="/images/jvm20190014.png" alt="Alt text"></p>
+<h3 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h3><p>是一种以获取最短回收停顿时间为目标的收集器，标记-清除算法。<br>特征：重视服务的响应速度。<br>过程：</p>
+<ul>
+<li>初始标记（Stop The World）</li>
+<li>并发标记（Stop The World）</li>
+<li>重新标记</li>
+<li>并发清除<br>优点：并发收集、低停顿<br>缺点：</li>
+<li>CMS收集器对CPU资源非常敏感</li>
+<li>CMS收集器无法处理浮动垃圾，可能出现失败而导致另一次Full GC的产生<ul>
+<li>浮动垃圾：并发清理阶段产生的新垃圾</li>
+</ul>
+</li>
+<li>收集结束时会有大量空间碎片产生</li>
+</ul>
+<p><img src="/images/jvm20190015.png" alt="Alt text"></p>
+<h3 id="G1收集器（JDK7u4达到商用）"><a href="#G1收集器（JDK7u4达到商用）" class="headerlink" title="G1收集器（JDK7u4达到商用）"></a>G1收集器（JDK7u4达到商用）</h3><p>是当今收集器技术发展的最前沿成果之一，被视为JDK1.7虚拟机的一个重要进化，是面向服务端应用的垃圾收集器。<br>特征：</p>
+<ul>
+<li>并行与并发</li>
+<li>分代收集</li>
+<li>空间整合（标志-清理、标记-整理混用）</li>
+<li>可预测的停顿</li>
+</ul>
+<p>区别：</p>
+<ul>
+<li>将整个Java堆划分为多个大小相等的独立区域</li>
+<li>可以有计划避免在整个Java堆中进行全区域的垃圾收集。</li>
+<li>把内存“化整为零”的思路</li>
+</ul>
+<p>过程：</p>
+<ul>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>最终标记</li>
+<li>筛选回收<br><img src="/images/jvm20190016.png" alt="Alt text"></li>
+</ul>
+<h3 id="理解GC日志"><a href="#理解GC日志" class="headerlink" title="理解GC日志"></a>理解GC日志</h3><ul>
+<li>[DefNew：Default New Generation，Serial收集器</li>
+<li>[ParNew：Parallel New Generation，ParNew收集器</li>
+<li>PSYoungGen：Parallel Scavenge收集器（老年代和永久代同理）</li>
+</ul>
+<p><img src="/images/jvm20190017.png" alt="Alt text"></p>
+<h3 id="垃圾收集器参数总结"><a href="#垃圾收集器参数总结" class="headerlink" title="垃圾收集器参数总结"></a>垃圾收集器参数总结</h3><p><img src="/images/jvm20190018.png" alt="Alt text"><br><img src="/images/jvm20190019.png" alt="Alt text"></p>
+<h2 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a>内存分配与回收策略</h2><ul>
+<li>对象优先在Eden分配</li>
+<li>大对象直接进入老年代</li>
+<li>长期存活的对象将进入老年代</li>
+<li>动态对象年龄判断</li>
+<li>空间分配担保</li>
+</ul>
+<h3 id="对象优先在Eden分配"><a href="#对象优先在Eden分配" class="headerlink" title="对象优先在Eden分配"></a>对象优先在Eden分配</h3><ul>
+<li>Minor GC：新生代的垃圾收集动作</li>
+<li>Major GC|Full GC：老年代GC（比Minor GC慢10倍以上）</li>
+</ul>
+<p><img src="/images/jvm20190020.png" alt="Alt text"></p>
+<h3 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h3><p>需要大量连续内存空间的Java对象（很长的字符串及数组）。<br>配置参数：-XX:PretenureSizeThreshold<br><img src="/images/jvm20190021.png" alt="Alt text"></p>
+<h3 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h3><p>内存回收根据对象年龄（Age）计数器来记录对象的年龄，默认15岁。<br>参数配置：-XX: MaxTenuringThreshold<br><img src="/images/jvm20190022.png" alt="Alt text"></p>
+<h3 id="动态对象年龄判断"><a href="#动态对象年龄判断" class="headerlink" title="动态对象年龄判断"></a>动态对象年龄判断</h3><p>相同年龄所有对象大小的总和大于Survivor空间的一半，直接进入老年代（不用等年龄到15）。<br><img src="/images/jvm20190022.png" alt="Alt text"></p>
+<h3 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h3><p>当老年代空间&lt;新生代晋升空间，会根据配置参数HandlePromotionFailure来担保是否继续操作。<br>配置参数：HandlePromotionFailure</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第2章-Java内存区域与内存溢出</title>
+    <url>/2019/11/02/%E7%AC%AC2%E7%AB%A0-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/</url>
+    <content><![CDATA[<p>本章将从概念上介绍Java虚拟机内存的各个区域，讲解这些区域的作用、服务对象以及其中可能产生的问题，这是翻越虚拟机内存管理这堵围墙的第一步。</p>
+<h2 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h2><p><img src="/images/jvm20190001.png" alt="Alt text"></p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器。<br>作用：分支、循环、跳转、异常处理、线程恢复等基础功能需要依赖这个计数器来完成。</p>
+<h3 id="Java虚拟机栈"><a href="#Java虚拟机栈" class="headerlink" title="Java虚拟机栈"></a>Java虚拟机栈</h3><p>是线程私有的，与线程生命周期相同。描述的是Java方法执行的内存模型，每个方法在执行的同时都会创建一个栈帧。<br>作用：用来存储局部变量表、操作数栈、动态链接、方法出口等<br>使用场景：每一个方法从调用直到执行完成的过程，就对应着一个栈帧在虚拟机入栈出栈的过程。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>与虚拟机栈类似，为Native方法服务。<br>常见异常：StackOverflowError、OutOfMemoryError异常</p>
+<h3 id="Java堆"><a href="#Java堆" class="headerlink" title="Java堆"></a>Java堆</h3><p>是垃圾收集器管理的主要区域，因此很多时候也被称为“GC堆”。<br>特点：</p>
+<ul>
+<li>Java虚拟机所管理的内存中最大的一块</li>
+<li>被所有线程共享的一块内存区域</li>
+<li>在虚拟机启动时创建</li>
+</ul>
+<p>作用：存放对象实例</p>
+<p>分类：</p>
+<ul>
+<li>粗分：新生代和老年代</li>
+<li>细分：Eden空间、From Survivor空间、To Survivor空间<br>扩展：-Xmx和-Xms<br>常见异常：OutOfMemoryError异常</li>
+</ul>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的。<br>作用：存储类信息、常量、静态变量、即时编译器编译后的代码等数据。<br>常见异常：OutOfMemoryError异常</p>
+<h3 id="运行时常量（归属方法区）"><a href="#运行时常量（归属方法区）" class="headerlink" title="运行时常量（归属方法区）"></a>运行时常量（归属方法区）</h3><p>是方法区的一部分。<br>作用：用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法区的运行时常量池中存放。<br>特征：具备动态性，如：String类的intern()方法<br>常见异常：OutOfMemoryError异常。</p>
+<h3 id="直接内存（堆外内存）"><a href="#直接内存（堆外内存）" class="headerlink" title="直接内存（堆外内存）"></a>直接内存（堆外内存）</h3><p>不是虚拟机运行时数据区的一部分，也不是Java虚拟机规范中定义的内存区域。<br>使用场景：NIO（基于通道与缓冲区的IO方式）-&gt;分配堆外内存（通过Native函数库）-&gt;通过一个存储在Java堆中的DirectByteBuffer对象作为这块内存的引用进行操作。<br>常见异常：OutOfMemoryError异常。</p>
+<h2 id="HotSpot虚拟机对象探秘"><a href="#HotSpot虚拟机对象探秘" class="headerlink" title="HotSpot虚拟机对象探秘"></a>HotSpot虚拟机对象探秘</h2><h3 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h3><p>虚拟机遇到new指令-&gt;检查加载类过程-&gt;为新对象分配内存-&gt;将分配到的内存空间都初始化为零值-&gt;对对象进行必要的设置。<br>内存分配方式：</p>
+<ul>
+<li>指针碰撞（Java堆内存绝对规整的）</li>
+<li>空闲列表（Java堆内存不规整）</li>
+<li>依赖关系<ul>
+<li>内存分配方式-&gt;Java堆是否规整-&gt;采用的收集器是否带有压缩整理功能。</li>
+</ul>
+</li>
+</ul>
+<p>存在问题：</p>
+<ul>
+<li>虚拟机对象创建是非常频繁的？</li>
+<li>并发情况下无法保证线程安全？</li>
+</ul>
+<p>解决方案：</p>
+<ul>
+<li>对分配内存空间的动作进行同步处理（采用CAS配置失败重试的方式保证更新操作的原子性）</li>
+<li>把内存分配的动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中预先分配一小块内存，称为本地线程分配缓冲（TLAB）。配置参数：-XX:+/-UserTLAB</li>
+</ul>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><ol>
+<li><p>对象头<br>存储对象自身的运行时数据（HashCode、GC分代年龄、锁状态标志等。<br><img src="/images/jvm20190002.png" alt="Alt text"></p>
+</li>
+<li><p>实例数据</p>
+</li>
+</ol>
+<ul>
+<li>存储顺序受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</li>
+<li>默认分配策略：longs/doubles-&gt;ints-&gt;shorts/chars-&gt;bytes/booleans-&gt;oops</li>
+</ul>
+<ol start="3">
+<li>对齐填充<br>由于HotSpotVM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，因此当对象实例数据部分没有对齐时，就需要通过对齐填充来补全。</li>
+</ol>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>Java程序需要通过栈上的reference数据来操作堆上的具体对象。</p>
+<h4 id="使用句柄"><a href="#使用句柄" class="headerlink" title="使用句柄"></a>使用句柄</h4><p><img src="/images/jvm20190003.png" alt="Alt text"></p>
+<h4 id="直接指针"><a href="#直接指针" class="headerlink" title="直接指针"></a>直接指针</h4><p><img src="/images/jvm20190004.png" alt="Alt text"></p>
+<h2 id="实战：OutOfMemoryError异常"><a href="#实战：OutOfMemoryError异常" class="headerlink" title="实战：OutOfMemoryError异常"></a>实战：OutOfMemoryError异常</h2><h3 id="Java堆溢出"><a href="#Java堆溢出" class="headerlink" title="Java堆溢出"></a>Java堆溢出</h3><p>配置：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8<br>解决区域异常步骤：</p>
+<ul>
+<li>通过内存映像分析工具（分析是内存泄漏||内存溢出）</li>
+<li>内存泄漏：通过工具进一步找出泄漏对象到GCRoots的引用链</li>
+<li>内存溢出：<ul>
+<li>检查虚拟机堆参数（-Xmx和-Xms）</li>
+<li>代码检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗</li>
+</ul>
+</li>
+</ul>
+<h3 id="虚拟机栈和本地方法栈溢出"><a href="#虚拟机栈和本地方法栈溢出" class="headerlink" title="虚拟机栈和本地方法栈溢出"></a>虚拟机栈和本地方法栈溢出</h3><p>配置参数：-Xss（-Xoss参数无效）</p>
+<h3 id="方法区和运行时常量池溢出"><a href="#方法区和运行时常量池溢出" class="headerlink" title="方法区和运行时常量池溢出"></a>方法区和运行时常量池溢出</h3><p>配置参数：-XX:PermSize=10M -XX:MaxPermSize=10M<br>异常场景：</p>
+<ul>
+<li>在经常动态生成大量Class的应用中，需要特别注意类的回收状况</li>
+<li>CGLib字节码增强和动态语言</li>
+<li>大量JSP或动态产生JSP文件的应用</li>
+<li>基于OSGI的应用</li>
+</ul>
+<h3 id="本机直接内存溢出"><a href="#本机直接内存溢出" class="headerlink" title="本机直接内存溢出"></a>本机直接内存溢出</h3><p>配置参数：-XX:MaxDirectMemorySize（不配置默认与Java堆最大值一样）<br>特征：在Head Dump文件中不会看见明显的异常</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第11章-Java并发编程实践</title>
     <url>/2019/11/02/%E7%AC%AC11%E7%AB%A0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<p>本章主要介绍了生产者和消费者模式进行并发编程、线上问题排查手段和性能测试实战。</p>
