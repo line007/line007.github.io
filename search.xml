@@ -1,6 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第9章-类加载及执行子系统的案例与实战</title>
+    <url>/2019/11/04/%E7%AC%AC9%E7%AB%A0-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8F%8A%E6%89%A7%E8%A1%8C%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A1%88%E4%BE%8B%E4%B8%8E%E5%AE%9E%E6%88%98/</url>
+    <content><![CDATA[<p>本章介绍了4个例子，类加载器（2个）和字节码（2个）。</p>
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><h3 id="Tomcat：正统的类加载器架构"><a href="#Tomcat：正统的类加载器架构" class="headerlink" title="Tomcat：正统的类加载器架构"></a>Tomcat：正统的类加载器架构</h3><p>一个服务器有多个自定义的加载器（如：tomcat、jetty等）。<br>功能健全的Web服务器要解决的问题：</p>
+<ol>
+<li>同服务器的两个Web应用程序所使用的Java类库可以实现相互隔离</li>
+<li>同服务器的两个Web应用程序所使用的Java类库可以互相共享。</li>
+<li>服务器需要尽可能的保证自身的安全不受部署的Web应用程序影响。</li>
+<li>支持JSP应用的Web服务器，大多数都需要支持HotSwap功能。<br><img src="/images/jvm20190109.png" alt="Alt text"><br><img src="/images/jvm20190110.png" alt="Alt text"></li>
+</ol>
+<h3 id="OSGi：灵活的类加载架构（网状结构）"><a href="#OSGi：灵活的类加载架构（网状结构）" class="headerlink" title="OSGi：灵活的类加载架构（网状结构）"></a>OSGi：灵活的类加载架构（网状结构）</h3><p>Java社区流传观点：学习J2EE规范，去看Jboss源码；学习类加载器，就去看OSGi源码。<br>最小模块：Bundle<br>特征：</p>
+<ol>
+<li>依赖关系：从传统的上层模块依赖底层模块转变为平级之间的依赖。</li>
+<li>可见性：只有被Export和Package才可能被外界访问。</li>
+<li>扩展性：可以实现模块级的热插拔功能。</li>
+<li>无关系性：Bundle类加载器之间只有规则，没有固定的委派关系。</li>
+<li>精确访问：一个Bundle类加载器为其他Bundle提供服务时，会根据Export-Package列表严格控制访问范围。<br><img src="/images/jvm20190111.png" alt="Alt text"></li>
+</ol>
+<p>缺点：</p>
+<ul>
+<li>额外的复杂度</li>
+<li>带来了死锁和内存泄露的风险</li>
+</ul>
+<h3 id="字段码生成技术与动态代理的实现"><a href="#字段码生成技术与动态代理的实现" class="headerlink" title="字段码生成技术与动态代理的实现"></a>字段码生成技术与动态代理的实现</h3><p>应用场景：</p>
+<ul>
+<li>Web服务器的JSP编译器</li>
+<li>编译时植入的AOP框架</li>
+<li>常用的动态代理技术</li>
+<li>使用反射的时候虚拟机都有可能会在运行时生成字符码</li>
+</ul>
+<p>过程：<img src="/images/jvm20190112.png" alt="Alt text"></p>
+<h3 id="Retrotranslator"><a href="#Retrotranslator" class="headerlink" title="Retrotranslator"></a>Retrotranslator</h3><p>跨越JDK版本（Java逆向移植）。<br>用途：<br><img src="/images/jvm20190113.png" alt="Alt text"></p>
+<p>实现原理（略）.<br>JDK升级4类改动：</p>
+<ul>
+<li>在编译层面做的改进</li>
+<li>对Java API的代码增强</li>
+<li>需要在字节码中进行支持的改动</li>
+<li>虚拟机内部的改进</li>
+</ul>
+<h2 id="实战：自己动手实现远程执行功能"><a href="#实战：自己动手实现远程执行功能" class="headerlink" title="实战：自己动手实现远程执行功能"></a>实战：自己动手实现远程执行功能</h2><p>JDK1.6之前：写一个JSP文件上传到服务器，然后通过服务器运行它，或者在服务端程序中加入BeanShell Script等的执行引擎去执行动态脚本。<br>JDK1.6之后：Compliler API。</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>在服务端执行临时代码。<br><img src="/images/jvm20190114.png" alt="Alt text"></p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ol>
+<li>如何编译提交到服务器的Java代码？</li>
+</ol>
+<ul>
+<li>使用tools.jar包（引入了额外的JAR包，JDK移植要把tools.jar带上）</li>
+<li>直接在客户端编译好，把字节码而不是Java代码传到服务端</li>
+</ul>
+<ol start="2">
+<li>如何执行编译之后的Java代码？</li>
+</ol>
+<ul>
+<li>让类加载器加载这个类生成一个Class对象，然后反射调用一下某个方法就可以了。（能卸载和回收）</li>
+</ul>
+<ol start="3">
+<li>如何收集Java代码的执行结果？</li>
+</ol>
+<ul>
+<li>标准输出System.out（会存在问题）</li>
+<li>解决：直接在执行的类中把对System.out的符号引用替换为我们准备的PrintStream的符号引用。</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li>实现同一类被多次加载（指定HotSwapClassLoader作为父类加载器）<br><img src="/images/jvm20190115.png" alt="Alt text"></li>
+<li>实现将java.lang.System替换为我们自己定义的HackSystem类的过程<br><img src="/images/jvm20190116.png" alt="Alt text"><br><img src="/images/jvm20190117.png" alt="Alt text"></li>
+</ol>
+<p>验证（略）</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第8章-虚拟机字节码执行引擎</title>
+    <url>/2019/11/04/%E7%AC%AC8%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</url>
+    <content><![CDATA[<p>本章中，分析了虚拟机在执行代码时，如何找到正确的方法、如何执行方法内的字节码，以及执行代码时涉及的内存结构。</p>
+<p>执行引擎是Java虚拟机最核心的组成部分之一。两种执行方式：解释执行和编译执行。</p>
+<h2 id="运行时栈帧结构"><a href="#运行时栈帧结构" class="headerlink" title="运行时栈帧结构"></a>运行时栈帧结构</h2><p>是用于支持虚拟机进行方法调用和方法执行的数据结构，它是虚拟机运行时数据区中的虚拟机栈的栈元素。<br>组成部分：</p>
+<ul>
+<li>局部变量表</li>
+<li>操作数栈</li>
+<li>动态连接</li>
+<li>方法返回地址</li>
+<li>一些额外的附加信息</li>
+</ul>
+<p>当前栈帧：位于栈顶的栈帧<br>当前方法：与这个当前栈帧相关联的方法<br>概念结构图：<br><img src="/images/jvm20190087.png" alt="Alt text"></p>
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>是一组变量存储空间，用于存放方法参数和方法内部定义的局部变量。<br>最小单位：变量槽（Slot）</p>
+<ol>
+<li>GC不会回收<br><img src="/images/jvm20190088.png" alt="Alt text"></li>
+<li>GC能回收<br><img src="/images/jvm20190089.png" alt="Alt text"></li>
+</ol>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>称为操作栈，它是一个后入先出栈。<br>元素：任意的Java数据类型。<br>容量：</p>
+<ul>
+<li>32位数据类型占容量1</li>
+<li>64位数据类型占容量2<br><img src="/images/jvm20190090.png" alt="Alt text"></li>
+</ul>
+<h3 id="动态连接"><a href="#动态连接" class="headerlink" title="动态连接"></a>动态连接</h3><p>每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接。符号引用分为两部分，一部分是静态解析，另一部分是动态连接。<br>静态解析：符号引用一部分在类加载阶段或者第一次使用的时候就转化为直接引用。<br>动态连接：符号引用另一部分将在每一次运行期间转化为直接引用。</p>
+<h3 id="方法返回地址"><a href="#方法返回地址" class="headerlink" title="方法返回地址"></a>方法返回地址</h3><p>在方法退出之后，都需要返回到方法的指定位置，程序才能继续执行，方法返回可能需要在栈帧中保存一些信息，用来帮助恢复它的上层方法的执行状态。<br>返回方式：</p>
+<ul>
+<li>执行引擎遇到任意一个方法返回的字节码指令</li>
+<li>在方法执行过程中遇到异常</li>
+</ul>
+<h3 id="附加信息"><a href="#附加信息" class="headerlink" title="附加信息"></a>附加信息</h3><p>在实际开发中，一般会把动态连接、方法返回地址与其他附加信息全部归为一类，称为栈帧信息。</p>
+<h2 id="方法调用"><a href="#方法调用" class="headerlink" title="方法调用"></a>方法调用</h2><p>方法调用并不等于方法执行，方法调用阶段唯一的任务就是确定被调用方法的版本（即调用哪一个方法）。所有方法调用中的目标方法在Class文件里面都是一个常量池中的符号引用。</p>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>调用目标在程序代码写好、编译器进行编译时就必须确定下来。这类方法的调用称为解析。<br>方法分类：</p>
+<ul>
+<li>静态方法：与类型直接关联</li>
+<li>私有方法：在外部不可被访问</li>
+</ul>
+<p>5条方法调用字节码指令：<br><img src="/images/jvm20190091.png" alt="Alt text"><br>示例：<br><img src="/images/jvm20190092.png" alt="Alt text"></p>
+<h3 id="分派"><a href="#分派" class="headerlink" title="分派"></a>分派</h3><p>Java三大特征：继承、封闭和多态。分派调用过程将会提示多态性特征的一些最基本的体现。</p>
+<h4 id="静态分派：（重载）"><a href="#静态分派：（重载）" class="headerlink" title="静态分派：（重载）"></a>静态分派：（重载）</h4><p>静态类型（外观类型）：Human<br>实际类型：man = new Man()…<br>加载原则：</p>
+<ol>
+<li>虚拟机在重载时是通过参数的静态类型而不是实际类型作为判断依据的<br><img src="/images/jvm20190093.png" alt="Alt text"></li>
+<li>重载方法匹配优先级（char-&gt;int-&gt;long-&gt;float-&gt;double）<br><img src="/images/jvm20190094.png" alt="Alt text"><br><img src="/images/jvm20190095.png" alt="Alt text"></li>
+</ol>
+<h4 id="动态分派（重写）"><a href="#动态分派（重写）" class="headerlink" title="动态分派（重写）"></a>动态分派（重写）</h4><p>在运行期根据实际类型确定方法执行版本的分派过程称为动态分派。<br>invokervirtual指令的运行时解析过程：<br><img src="/images/jvm20190096.png" alt="Alt text"><br><img src="/images/jvm20190097.png" alt="Alt text"></p>
+<h4 id="单分派与多分派"><a href="#单分派与多分派" class="headerlink" title="单分派与多分派"></a>单分派与多分派</h4><p>方法的宗量：方法的接收者与方法的参数统称为方法的宗量。<br>分类：</p>
+<ul>
+<li>Java语言的静态分派属于多分派类型</li>
+<li>Java语言的动态分派属性单分派类型<br><img src="/images/jvm20190098.png" alt="Alt text"></li>
+</ul>
+<h4 id="虚拟机动态分派的实现"><a href="#虚拟机动态分派的实现" class="headerlink" title="虚拟机动态分派的实现"></a>虚拟机动态分派的实现</h4><p>虚拟机基于性能考虑，大部分使用”稳定优化“手段——建立一个虚方法表。<br>虚方法表：<br><img src="/images/jvm20190099.png" alt="Alt text"></p>
+<h3 id="动态类型语言支持"><a href="#动态类型语言支持" class="headerlink" title="动态类型语言支持"></a>动态类型语言支持</h3><p>关键特征是它的类型检查的主体过程是在运行期而不是在编译期。<br><img src="/images/jvm20190100.png" alt="Alt text"></p>
+<ol>
+<li>JDK1.7与动态类型<br>新增了invokedynamic指令.</li>
+<li>java.lang.invoke包（类似C指针）<br>作用：提供一种新的目标方法机制——MethodHandler</li>
+<li>invokedynamic指令<br>与MethodHandler作用一样.</li>
+<li>掌控方法分派规则<br><img src="/images/jvm20190101.png" alt="Alt text"></li>
+</ol>
+<h2 id="基于栈的字节码解释执行引擎"><a href="#基于栈的字节码解释执行引擎" class="headerlink" title="基于栈的字节码解释执行引擎"></a>基于栈的字节码解释执行引擎</h2><p>探讨虚拟机是如何执行方法中的字节码指令的。</p>
+<h3 id="解释执行"><a href="#解释执行" class="headerlink" title="解释执行"></a>解释执行</h3><p><img src="/images/jvm20190102.png" alt="Alt text"></p>
+<h3 id="基于栈的指令集与基于寄存器的指令集"><a href="#基于栈的指令集与基于寄存器的指令集" class="headerlink" title="基于栈的指令集与基于寄存器的指令集"></a>基于栈的指令集与基于寄存器的指令集</h3><p>两者区别：基于栈的指令集可移植。<br>缺点：基于栈的指令集执行速度相对来说慢。</p>
+<h3 id="基于栈的解释器执行过程"><a href="#基于栈的解释器执行过程" class="headerlink" title="基于栈的解释器执行过程"></a>基于栈的解释器执行过程</h3><h4 id="一段简单的算术代码"><a href="#一段简单的算术代码" class="headerlink" title="一段简单的算术代码"></a>一段简单的算术代码</h4><p><img src="/images/jvm20190103.png" alt="Alt text"></p>
+<h4 id="代码对应的字节码表示"><a href="#代码对应的字节码表示" class="headerlink" title="代码对应的字节码表示"></a>代码对应的字节码表示</h4><p><img src="/images/jvm20190104.png" alt="Alt text"></p>
+<h4 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h4><p><img src="/images/jvm20190105.png" alt="Alt text"><br><img src="/images/jvm20190106.png" alt="Alt text"><br><img src="/images/jvm20190107.png" alt="Alt text"><br><img src="/images/jvm20190108.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第7章-虚拟机类加载机制</title>
+    <url>/2019/11/04/%E7%AC%AC7%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>本章介绍了类加载过程的”加载“、”准备“、”验证“、”解析“和”初始化“5个阶段中虚拟机进行了哪些动作，还介绍了类加载器的工作原理及其对虚拟机的意义。</p>
+<h2 id="类加载的时机"><a href="#类加载的时机" class="headerlink" title="类加载的时机"></a>类加载的时机</h2><p>类从被加载到虚拟机内存中开始，到卸载出内存为止。<br>生命周期：<em>加载</em>、<em>验证</em>、<em>准备</em>、解析、<em>初始化</em>、使用和<em>卸载</em>7个阶段（粗体5个顺序是确定的）。<br><img src="/images/jvm20190075.png" alt="Alt text"><br>主动引用：</p>
+<ul>
+<li>遇到new、getstatic、putstaic或invokestatic这4条指令</li>
+<li>使用java.lang.reflect包的方法对类进行反射调用的时候，如果类没进行初始化，则需先触发其初始化。</li>
+<li>当初始化一个类时，如果发现其父类还没有进行初始化，则需先解决父类的初始化。</li>
+<li>当虚拟机启动时，用户需要指定一个要执行的类（包含main()方法的那个类），虚拟机会先初始化这个主类</li>
+<li>当使用JDK1.7的动态语言支持时，如果一个java.lang.invoke.MethodHandle实例最后的解析结果REF_getStatic、REF_putStatic、REF_invokeStatic的方法句柄，并且这个方法句柄对应的类没有进行初始化，则需要先触发其初始化。</li>
+</ul>
+<p>被动引用：</p>
+<ul>
+<li>对于静态字段，只有直接定义这个字段的类才会被初始化</li>
+<li>通过数组定义来引用类，不会触发类的初始化</li>
+<li>常量在编译阶段会存入调用类的常量池中，本质上并没有直接引用到定义常量的类，因此不会触发定义常量的类的初始化。</li>
+</ul>
+<h2 id="类加载的过程"><a href="#类加载的过程" class="headerlink" title="类加载的过程"></a>类加载的过程</h2><h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><p>类加载的第一个阶段。<br>过程：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态结构转化为方法区的运行时数据结构</li>
+<li>在内存中生成一个代表这个类的java.lang.class对象，作为方法区这个类的各种数据访问入口。</li>
+</ol>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。<br>过程：</p>
+<ol>
+<li>文件格式验证（检查Class文件格式规范）</li>
+<li>元数据验证（检查语义合法性、逻辑性）</li>
+<li>字节码验证（最复杂的阶段）</li>
+<li>符号引用验证（确保解析动作能正常执行）</li>
+</ol>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>是正式为类变量分配内存并设置类变量初始化值的阶段。<br>重点：</p>
+<ol>
+<li>这时进行内存分配的仅包括类变量（被static修饰的变量），不包括实例变量</li>
+<li>默认变量初始化值（常量从常量池取对应的常量值）</li>
+</ol>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>是虚拟机将常量池内的符号引用替换为直接引用的过程。</p>
+<ol>
+<li>符号引用：符号引用以一组符号来描述所有引用的目标，符号可以是任何形式的字面量。</li>
+<li>直接引用：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。</li>
+<li>解析对象（7类符号引用）：</li>
+</ol>
+<ul>
+<li>类或接口</li>
+<li>字段</li>
+<li>类方法</li>
+<li>接口方法</li>
+<li>方法类型</li>
+<li>方法句柄</li>
+<li>调用点限定符。</li>
+</ul>
+<ol start="4">
+<li>类或接口的解析（3个步骤）</li>
+</ol>
+<ul>
+<li>如果C不是一个数组类型，那虚拟机将会把代表N的全限定名传递给D的类加载器去加载这个类C。</li>
+<li>如果C是一个数组类型，并且数组的元素类型为对象，也就是N的描述符会是类似“[Ljava/lang/Inter”的形式，按上面的规则加载数组元素类型</li>
+<li>如果上面解析没问题，在解析完成前不要进行符号引用验证，确认D是否具备对C的访问权限。</li>
+</ul>
+<ol start="5">
+<li><p>字段解析<br><img src="/images/jvm20190076.png" alt="Alt text"><br><img src="/images/jvm20190077.png" alt="Alt text"></p>
+</li>
+<li><p>类方法解析<br><img src="/images/jvm20190078.png" alt="Alt text"></p>
+</li>
+<li><p>接口方法解析<br><img src="/images/jvm20190079.png" alt="Alt text"></p>
+</li>
+</ol>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>真正开始执行类中定义的Java程序代码，执行类构造器<code>&lt;cinit&gt;()</code>方法的过程。<br>过程：<br><img src="/images/jvm20190080.png" alt="Alt text">    </p>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>“通过一个类的全限定名来获取描述此类的二进制流”这个动作放到Java虚拟机外部去实现，实现这个动作的代码模块称为“类加载器”。</p>
+<h3 id="类与类加载器"><a href="#类与类加载器" class="headerlink" title="类与类加载器"></a>类与类加载器</h3><p>用于实现类的加载动作。<br>例：两个类是否相等（前提是被同一个类加载器加载的）<br><img src="/images/jvm20190081.png" alt="Alt text">    </p>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p>类加载器粗分2类：</p>
+<ul>
+<li>启动类加载器（BootstrapClassLoader）</li>
+<li>所有其他类的加载器（java.class）</li>
+</ul>
+<p>细分3类：</p>
+<ul>
+<li>启动类加载器（Bootstrap ClassLoader）</li>
+<li>扩展类加载器（Extension ClassLoader）</li>
+<li>启动程序类加载器（ApplicationClassLoader）<br><img src="/images/jvm20190082.png" alt="Alt text"></li>
+</ul>
+<p>过程：<br><img src="/images/jvm20190083.png" alt="Alt text"><br>优点：Java类随着它的类加载器一起具备了一种带有优先级的层次关系<br>代码实现：<br><img src="/images/jvm20190084.png" alt="Alt text"></p>
+<h3 id="破坏双亲委派模型"><a href="#破坏双亲委派模型" class="headerlink" title="破坏双亲委派模型"></a>破坏双亲委派模型</h3><p>loadClass()失败-&gt;findClass()–JDK1.2后添加一个新的方法，为了兼容1.2之间的代码。</p>
+<h4 id="线程上下文类加载器"><a href="#线程上下文类加载器" class="headerlink" title="线程上下文类加载器"></a>线程上下文类加载器</h4><p>产生原因：基础类调回用户的代码（如：JNDI服务），Java中所有涉及SPI的加载动作基本上都采用这种方式<br><img src="/images/jvm20190085.png" alt="Alt text"></p>
+<h4 id="OSGI环境"><a href="#OSGI环境" class="headerlink" title="OSGI环境"></a>OSGI环境</h4><p><img src="/images/jvm20190086.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>深入了解JVM虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>二进制转换</title>
     <url>/2019/11/02/%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2/</url>
     <content><![CDATA[<h2 id="关于二进制说明"><a href="#关于二进制说明" class="headerlink" title="关于二进制说明"></a>关于二进制说明</h2><p>对于整数，有四种表达方式：</p>
