@@ -79,13 +79,13 @@
 
 
 
-<meta name="description" content="构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping(&quot;&#x2F;&amp;#123;id&amp;#125;&quot;)public Taco tacoById(">
+<meta name="description" content="本章主要介绍了spring REST服务以及与JMS、RabbitMQ的集成。 构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping">
 <meta name="keywords" content="spring">
 <meta property="og:type" content="article">
 <meta property="og:title" content="第二章-集成spring">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;05&#x2F;%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E9%9B%86%E6%88%90spring&#x2F;index.html">
 <meta property="og:site_name" content="一颗小草">
-<meta property="og:description" content="构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping(&quot;&#x2F;&amp;#123;id&amp;#125;&quot;)public Taco tacoById(">
+<meta property="og:description" content="本章主要介绍了spring REST服务以及与JMS、RabbitMQ的集成。 构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-001.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-002.png">
@@ -94,7 +94,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-005.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-006.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-007.png">
-<meta property="og:updated_time" content="2019-11-05T07:19:18.574Z">
+<meta property="og:updated_time" content="2019-11-05T07:23:21.295Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-001.png">
 
@@ -392,7 +392,8 @@
       
 
       
-        <h2 id="构建一个REST服务"><a href="#构建一个REST服务" class="headerlink" title="构建一个REST服务"></a>构建一个REST服务</h2><p>常用的几个请求方式注解。<br><img src="/images/spring-ch2-001.png" alt="Alt text"><br>案例：<br><img src="/images/spring-ch2-002.png" alt="Alt text"></p>
+        <p>本章主要介绍了spring REST服务以及与JMS、RabbitMQ的集成。</p>
+<h2 id="构建一个REST服务"><a href="#构建一个REST服务" class="headerlink" title="构建一个REST服务"></a>构建一个REST服务</h2><p>常用的几个请求方式注解。<br><img src="/images/spring-ch2-001.png" alt="Alt text"><br>案例：<br><img src="/images/spring-ch2-002.png" alt="Alt text"></p>
 <h3 id="允许XML输出"><a href="#允许XML输出" class="headerlink" title="允许XML输出"></a>允许XML输出</h3><figure class="highlight java"><figcaption><span>[允许XML输出]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(path=<span class="string">"/design"</span>, produces=&#123;<span class="string">"application/json"</span>, <span class="string">"text/xml"</span>&#125;)</span><br></pre></td></tr></table></figure>
 
 <h3 id="url传参"><a href="#url传参" class="headerlink" title="url传参"></a>url传参</h3><figure class="highlight java"><figcaption><span>[url传参]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Taco <span class="title">tacoById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">	Optional&lt;Taco&gt; optTaco = tacoRepo.findById(id);</span><br><span class="line">	<span class="keyword">if</span> (optTaco.isPresent()) &#123;</span><br><span class="line">		<span class="keyword">return</span> optTaco.get();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
