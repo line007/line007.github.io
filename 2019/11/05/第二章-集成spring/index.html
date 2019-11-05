@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping(&quot;&#x2F;&amp;#123;id&amp;#125;&quot;)public Taco tacoById(">
+<meta name="keywords" content="spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章-集成spring">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;05&#x2F;%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E9%9B%86%E6%88%90spring&#x2F;index.html">
+<meta property="og:site_name" content="一颗小草">
+<meta property="og:description" content="构建一个REST服务常用的几个请求方式注解。案例： 允许XML输出[允许XML输出]1@RequestMapping(path=&quot;&#x2F;design&quot;, produces=&amp;#123;&quot;application&#x2F;json&quot;, &quot;text&#x2F;xml&quot;&amp;#125;)  url传参[url传参]12345678@GetMapping(&quot;&#x2F;&amp;#123;id&amp;#125;&quot;)public Taco tacoById(">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-001.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-002.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-003.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-004.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-005.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-006.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-007.png">
+<meta property="og:updated_time" content="2019-11-05T07:19:18.574Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;spring-ch2-001.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/05/第二章-集成spring/"/>
+
+
+
+
+
+  <title>第二章-集成spring | 一颗小草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一颗小草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">好好学习，天天向上</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/categories/Java" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            学习
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/05/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E9%9B%86%E6%88%90spring/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="linestyle">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一颗小草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第二章-集成spring</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-05T13:46:20+08:00">
+                2019-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="构建一个REST服务"><a href="#构建一个REST服务" class="headerlink" title="构建一个REST服务"></a>构建一个REST服务</h2><p>常用的几个请求方式注解。<br><img src="/images/spring-ch2-001.png" alt="Alt text"><br>案例：<br><img src="/images/spring-ch2-002.png" alt="Alt text"></p>
+<h3 id="允许XML输出"><a href="#允许XML输出" class="headerlink" title="允许XML输出"></a>允许XML输出</h3><figure class="highlight java"><figcaption><span>[允许XML输出]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(path=<span class="string">"/design"</span>, produces=&#123;<span class="string">"application/json"</span>, <span class="string">"text/xml"</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="url传参"><a href="#url传参" class="headerlink" title="url传参"></a>url传参</h3><figure class="highlight java"><figcaption><span>[url传参]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Taco <span class="title">tacoById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">	Optional&lt;Taco&gt; optTaco = tacoRepo.findById(id);</span><br><span class="line">	<span class="keyword">if</span> (optTaco.isPresent()) &#123;</span><br><span class="line">		<span class="keyword">return</span> optTaco.get();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="url返回404"><a href="#url返回404" class="headerlink" title="url返回404"></a>url返回404</h3><figure class="highlight java"><figcaption><span>[返回404]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Taco&gt; <span class="title">tacoById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">	Optional&lt;Taco&gt; optTaco = tacoRepo.findById(id);</span><br><span class="line">	<span class="keyword">if</span> (optTaco.isPresent()) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(optTaco.get(), HttpStatus.OK);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(<span class="keyword">null</span>, HttpStatus.NOT_FOUND);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用REST服务"><a href="#使用REST服务" class="headerlink" title="使用REST服务"></a>使用REST服务</h2><h3 id="使用RestTemplate使用REST端点"><a href="#使用RestTemplate使用REST端点" class="headerlink" title="使用RestTemplate使用REST端点"></a>使用RestTemplate使用REST端点</h3><p><img src="/images/spring-ch2-003.png" alt="Alt text"></p>
+<h4 id="配置RestTemplate"><a href="#配置RestTemplate" class="headerlink" title="配置RestTemplate"></a>配置RestTemplate</h4><figure class="highlight java"><figcaption><span>[spring配置类]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">restTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="获得资源（Getting-resouces）"><a href="#获得资源（Getting-resouces）" class="headerlink" title="获得资源（Getting resouces）"></a>获得资源（Getting resouces）</h4><figure class="highlight java"><figcaption><span>[查询：getForObject()]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Ingredient <span class="title">getIngredientById</span><span class="params">(String ingredientId)</span> </span>&#123;</span><br><span class="line">	Map&lt;String,String&gt; urlVariables = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">	urlVariables.put(<span class="string">"id"</span>, ingredientId);</span><br><span class="line">	<span class="keyword">return</span> rest.getForObject(<span class="string">"http://localhost:8080/ingredients/&#123;id&#125;"</span>,</span><br><span class="line">		Ingredient<span class="class">.<span class="keyword">class</span>, <span class="title">urlVariables</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><figcaption><span>[查询：URI+getForObject()]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Ingredient <span class="title">getIngredientById</span><span class="params">(String ingredientId)</span> </span>&#123;</span><br><span class="line">	Map&lt;String,String&gt; urlVariables = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">	urlVariables.put(<span class="string">"id"</span>, ingredientId);</span><br><span class="line">	URI url = UriComponentsBuilder</span><br><span class="line">		.fromHttpUrl(<span class="string">"http://localhost:8080/ingredients/&#123;id&#125;"</span>)</span><br><span class="line">		.build(urlVariables);</span><br><span class="line">	<span class="keyword">return</span> rest.getForObject(url, Ingredient<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><figcaption><span>[查询：getForEntity()]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Ingredient <span class="title">getIngredientById</span><span class="params">(String ingredientId)</span> </span>&#123;</span><br><span class="line">	ResponseEntity&lt;Ingredient&gt; responseEntity =</span><br><span class="line">		rest.getForEntity(<span class="string">"http://localhost:8080/ingredients/&#123;id&#125;"</span>,</span><br><span class="line">			Ingredient<span class="class">.<span class="keyword">class</span>, <span class="title">ingredientId</span>)</span>;</span><br><span class="line">	log.info(<span class="string">"Fetched time: "</span> +</span><br><span class="line">		responseEntity.getHeaders().getDate());</span><br><span class="line">	<span class="keyword">return</span> responseEntity.getBody();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="更新资源（Putting-resouces）"><a href="#更新资源（Putting-resouces）" class="headerlink" title="更新资源（Putting resouces）"></a>更新资源（Putting resouces）</h4><figure class="highlight java"><figcaption><span>[新增或编辑]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateIngredient</span><span class="params">(Ingredient ingredient)</span> </span>&#123;</span><br><span class="line">	rest.put(<span class="string">"http://localhost:8080/ingredients/&#123;id&#125;"</span>,</span><br><span class="line">		ingredient,</span><br><span class="line">		ingredient.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除资源（DELETEing-resources）"><a href="#删除资源（DELETEing-resources）" class="headerlink" title="删除资源（DELETEing resources）"></a>删除资源（DELETEing resources）</h4><figure class="highlight java"><figcaption><span>[删除]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteIngredient</span><span class="params">(Ingredient ingredient)</span> </span>&#123;</span><br><span class="line">	rest.delete(<span class="string">"http://localhost:8080/ingredients/&#123;id&#125;"</span>,</span><br><span class="line">		ingredient.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="发布资源（POSTing-resource-data）"><a href="#发布资源（POSTing-resource-data）" class="headerlink" title="发布资源（POSTing resource data）"></a>发布资源（POSTing resource data）</h4><figure class="highlight java"><figcaption><span>[发布资源]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式一</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Ingredient <span class="title">createIngredient</span><span class="params">(Ingredient ingredient)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> rest.postForObject(<span class="string">"http://localhost:8080/ingredients"</span>,</span><br><span class="line">							ingredient,</span><br><span class="line">							Ingredient<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方式二</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> URI <span class="title">createIngredient</span><span class="params">(Ingredient ingredient)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> rest.postForLocation(<span class="string">"http://localhost:8080/ingredients"</span>,</span><br><span class="line">		ingredient);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方式三</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Ingredient <span class="title">createIngredient</span><span class="params">(Ingredient ingredient)</span> </span>&#123;</span><br><span class="line">	ResponseEntity&lt;Ingredient&gt; responseEntity =</span><br><span class="line">		rest.postForEntity(<span class="string">"http://localhost:8080/ingredients"</span>,</span><br><span class="line">			ingredient,</span><br><span class="line">			Ingredient<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">	log.info(<span class="string">"New resource created at "</span> +</span><br><span class="line">		responseEntity.getHeaders().getLocation());</span><br><span class="line">	<span class="keyword">return</span> responseEntity.getBody();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="异步发送消息"><a href="#异步发送消息" class="headerlink" title="异步发送消息"></a>异步发送消息</h2><h3 id="使用JMS发送消息"><a href="#使用JMS发送消息" class="headerlink" title="使用JMS发送消息"></a>使用JMS发送消息</h3><h4 id="安装JMS"><a href="#安装JMS" class="headerlink" title="安装JMS"></a>安装JMS</h4><ol>
+<li><p>添加依赖</p>
+<figure class="highlight html"><figcaption><span>[pom.xml]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-activemq<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改spring配置文件</p>
+<figure class="highlight java"><figcaption><span>[spring.yml]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">	activemq:</span><br><span class="line">		broker-url: tcp:<span class="comment">//activemq.tacocloud.com</span></span><br><span class="line">		user: tacoweb</span><br><span class="line">		password: l3tm31n</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="使用JmsTemplate发送消息"><a href="#使用JmsTemplate发送消息" class="headerlink" title="使用JmsTemplate发送消息"></a>使用JmsTemplate发送消息</h4><p>JmsTemplate有几个用于发送消息的方法，包括以下方法：</p>
+<figure class="highlight java"><figcaption><span>[JmsTemplate核心方法]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Send raw messages</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(MessageCreator messageCreator)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(Destination destination, MessageCreator messageCreator)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(String destinationName, MessageCreator messageCreator)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="comment">// Send messages converted from objects</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Object message)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Destination destination, Object message)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String destinationName, Object message)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="comment">// Send messages converted from objects with post-processing</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Object message,</span></span></span><br><span class="line"><span class="function"><span class="params">MessagePostProcessor postProcessor)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Destination destination, Object message,</span></span></span><br><span class="line"><span class="function"><span class="params">MessagePostProcessor postProcessor)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String destinationName, Object message,</span></span></span><br><span class="line"><span class="function"><span class="params">MessagePostProcessor postProcessor)</span> <span class="keyword">throws</span> JmsException</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="编写发送方法"><a href="#编写发送方法" class="headerlink" title="编写发送方法"></a>编写发送方法</h5><figure class="highlight java"><figcaption><span>[send()]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JmsOrderMessagingService</span> <span class="keyword">implements</span> <span class="title">OrderMessagingService</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> JmsTemplate jms;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">JmsOrderMessagingService</span><span class="params">(JmsTemplate jms)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.jms = jms;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**<span class="doctag">@Override</span></span></span><br><span class="line"><span class="comment">	public void sendOrder(Order order) &#123;</span></span><br><span class="line"><span class="comment">		jms.send(new MessageCreator() &#123;</span></span><br><span class="line"><span class="comment">					 <span class="doctag">@Override</span></span></span><br><span class="line"><span class="comment">					 public Message createMessage(Session session)</span></span><br><span class="line"><span class="comment">						 throws JMSException &#123;</span></span><br><span class="line"><span class="comment">						 return session.createObjectMessage(order);</span></span><br><span class="line"><span class="comment">					 &#125;</span></span><br><span class="line"><span class="comment">				 &#125;</span></span><br><span class="line"><span class="comment">		);</span></span><br><span class="line"><span class="comment">	&#125;*/</span></span><br><span class="line">	<span class="comment">// 简化版</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">		jms.send(session -&gt; session.createObjectMessage(order));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="指定发送目的地"><a href="#指定发送目的地" class="headerlink" title="指定发送目的地"></a>指定发送目的地</h5><figure class="highlight java"><figcaption><span>[配置目的地]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.spring.yml文件</span></span><br><span class="line">spring:</span><br><span class="line">	jms:</span><br><span class="line">		template:</span><br><span class="line">			<span class="keyword">default</span>-destination: tacocloud.order.queue</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.配置类</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Destination <span class="title">orderQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> ActiveMQQueue(<span class="string">"tacocloud.order.queue"</span>);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3.注入到service类，JmsOrderMessagingService</span></span><br><span class="line"><span class="keyword">private</span> Destination orderQueue;</span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">JmsOrderMessagingService</span><span class="params">(JmsTemplate jms,</span></span></span><br><span class="line"><span class="function"><span class="params">								Destination orderQueue)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.jms = jms;</span><br><span class="line">	<span class="keyword">this</span>.orderQueue = orderQueue;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">	jms.send(</span><br><span class="line">		orderQueue,</span><br><span class="line">		session -&gt; session.createObjectMessage(order));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4.使用类似这样的目标对象指定目标，使您有机会配置目标，而不仅仅是目标名称。</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">	jms.send(</span><br><span class="line">		<span class="string">"tacocloud.order.queue"</span>,</span><br><span class="line">		session -&gt; session.createObjectMessage(order));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="发送前对消息进行转换"><a href="#发送前对消息进行转换" class="headerlink" title="发送前对消息进行转换"></a>发送前对消息进行转换</h5><figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">	jms.convertAndSend(<span class="string">"tacocloud.order.queue"</span>, order);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置消息转换器"><a href="#配置消息转换器" class="headerlink" title="配置消息转换器"></a>配置消息转换器</h5><figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MessageConverter</span> </span>&#123;</span><br><span class="line">	<span class="function">Message <span class="title">toMessage</span><span class="params">(Object object, Session session)</span></span></span><br><span class="line"><span class="function">		<span class="keyword">throws</span> JMSException, MessageConversionException</span>;</span><br><span class="line">	<span class="function">Object <span class="title">fromMessage</span><span class="params">(Message message)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/spring-ch2-004.png" alt="Alt text"></p>
+<figure class="highlight java"><figcaption><span>[MappingJackson2MessageConverter]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> MappingJackson2MessageConverter <span class="title">messageConverter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	MappingJackson2MessageConverter messageConverter =</span><br><span class="line">		<span class="keyword">new</span> MappingJackson2MessageConverter();</span><br><span class="line">	messageConverter.setTypeIdPropertyName(<span class="string">"_typeId"</span>);</span><br><span class="line">	<span class="keyword">return</span> messageConverter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h5 id="后期处理消息"><a href="#后期处理消息" class="headerlink" title="后期处理消息"></a>后期处理消息</h5><p>在消息中添加一个自定义头。</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">jms.send(<span class="string">"tacocloud.order.queue"</span>,</span><br><span class="line">	session -&gt; &#123;</span><br><span class="line">		Message message = session.createObjectMessage(order);</span><br><span class="line">		message.setStringProperty(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 案例</span></span><br><span class="line">jms.convertAndSend(<span class="string">"tacocloud.order.queue"</span>, order, <span class="keyword">new</span> MessagePostProcessor() &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Message <span class="title">postProcessMessage</span><span class="params">(Message message)</span> <span class="keyword">throws</span> JMSException </span>&#123;</span><br><span class="line">		message.setStringProperty(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">		<span class="keyword">return</span> message;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 案例-优化</span></span><br><span class="line">jms.convertAndSend(<span class="string">"tacocloud.order.queue"</span>, order,</span><br><span class="line">	message -&gt; &#123;</span><br><span class="line">		message.setStringProperty(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">	<span class="keyword">return</span> message;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 特殊情况</span></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/convertAndSend/order"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">convertAndSendOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Order order = buildOrder();</span><br><span class="line">	jms.convertAndSend(<span class="string">"tacocloud.order.queue"</span>, order,</span><br><span class="line">		<span class="keyword">this</span>::addOrderSource);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"Convert and sent order"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> Message <span class="title">addOrderSource</span><span class="params">(Message message)</span> <span class="keyword">throws</span> JMSException </span>&#123;</span><br><span class="line">	message.setStringProperty(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">	<span class="keyword">return</span> message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收JMS消息"><a href="#接收JMS消息" class="headerlink" title="接收JMS消息"></a>接收JMS消息</h4><h5 id="接收JMS-TEMPLATE"><a href="#接收JMS-TEMPLATE" class="headerlink" title="接收JMS TEMPLATE"></a>接收JMS TEMPLATE</h5><p>核心方法：</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">()</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">(Destination destination)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">(String destinationName)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">()</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">(Destination destination)</span> <span class="keyword">throws</span> JmsException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">(String destinationName)</span> <span class="keyword">throws</span> JmsException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>案例：</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 案例一</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JmsOrderReceiver</span> <span class="keyword">implements</span> <span class="title">OrderReceiver</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> JmsTemplate jms;</span><br><span class="line">	<span class="keyword">private</span> MessageConverter converter;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">JmsOrderReceiver</span><span class="params">(JmsTemplate jms, MessageConverter converter)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.jms = jms;</span><br><span class="line">		<span class="keyword">this</span>.converter = converter;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Message message = jms.receive(<span class="string">"tacocloud.order.queue"</span>);</span><br><span class="line">		<span class="keyword">return</span> (Order) converter.fromMessage(message);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 案例二</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JmsOrderReceiver</span> <span class="keyword">implements</span> <span class="title">OrderReceiver</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> JmsTemplate jms;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">JmsOrderReceiver</span><span class="params">(JmsTemplate jms)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.jms = jms;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (Order) jms.receiveAndConvert(<span class="string">"tacocloud.order.queue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="定义消息监听器"><a href="#定义消息监听器" class="headerlink" title="定义消息监听器"></a>定义消息监听器</h5><figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderListener</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> KitchenUI ui;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">OrderListener</span><span class="params">(KitchenUI ui)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.ui = ui;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@JmsListener</span>(destination = <span class="string">"tacocloud.order.queue"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">receiveOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">		ui.displayOrder(order);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用RabbitMQ-and-AMQP"><a href="#使用RabbitMQ-and-AMQP" class="headerlink" title="使用RabbitMQ and AMQP"></a>使用RabbitMQ and AMQP</h3><p><img src="/images/spring-ch2-005.png" alt="Alt text"></p>
+<h4 id="向Spring添加RabbitMQ"><a href="#向Spring添加RabbitMQ" class="headerlink" title="向Spring添加RabbitMQ"></a>向Spring添加RabbitMQ</h4><ol>
+<li><p>添加RabbitMQ依赖</p>
+<figure class="highlight html"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加RabbitMQ配置文件<br><img src="/images/spring-ch2-006.png" alt="Alt text"></p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">	profiles: prod</span><br><span class="line">	rabbitmq:</span><br><span class="line">		host: rabbit.tacocloud.com</span><br><span class="line">		port: <span class="number">5673</span></span><br><span class="line">		username: tacoweb</span><br><span class="line">		password: l3tm31n</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h5 id="使用RabbitTemplate发送消息"><a href="#使用RabbitTemplate发送消息" class="headerlink" title="使用RabbitTemplate发送消息"></a>使用RabbitTemplate发送消息</h5><p>RabbitTemplate几个核心方法：</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Send raw messages</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(Message message)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(String routingKey, Message message)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send</span><span class="params">(String exchange, String routingKey, Message message)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="comment">// Send messages converted from objects</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Object message)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String routingKey, Object message)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String exchange, String routingKey,</span></span></span><br><span class="line"><span class="function"><span class="params">Object message)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="comment">// Send messages converted from objects with post-processing</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(Object message, MessagePostProcessor mPP)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String routingKey, Object message,</span></span></span><br><span class="line"><span class="function"><span class="params">MessagePostProcessor messagePostProcessor)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">convertAndSend</span><span class="params">(String exchange, String routingKey,</span></span></span><br><span class="line"><span class="function"><span class="params">Object message,</span></span></span><br><span class="line"><span class="function"><span class="params">MessagePostProcessor messagePostProcessor)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>案例：</p>
+<figure class="highlight java"><figcaption><span>[1.代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitOrderMessagingService</span></span></span><br><span class="line"><span class="class">	<span class="keyword">implements</span> <span class="title">OrderMessagingService</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> RabbitTemplate rabbit;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">RabbitOrderMessagingService</span><span class="params">(RabbitTemplate rabbit)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.rabbit = rabbit;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">		MessageConverter converter = rabbit.getMessageConverter();</span><br><span class="line">		MessageProperties props = <span class="keyword">new</span> MessageProperties();</span><br><span class="line">		Message message = converter.toMessage(order, props);</span><br><span class="line">		rabbit.send(<span class="string">"tacocloud.order"</span>, message);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 消息转换</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">		rabbit.convertAndSend(<span class="string">"tacocloud.order"</span>, order);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><figcaption><span>[2.spring.yml文件]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">	rabbitmq:</span><br><span class="line">	template:</span><br><span class="line">		exchange: tacocloud.orders</span><br><span class="line">		routing-key: kitchens.central</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置消息转换器-1"><a href="#配置消息转换器-1" class="headerlink" title="配置消息转换器"></a>配置消息转换器</h5><figure class="highlight java"><figcaption><span>[spring配置类]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> MessageConverter <span class="title">messageConverter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> Jackson2JsonMessageConverter();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="设置消息属性"><a href="#设置消息属性" class="headerlink" title="设置消息属性"></a>设置消息属性</h5><figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">	MessageConverter converter = rabbit.getMessageConverter();</span><br><span class="line">	MessageProperties props = <span class="keyword">new</span> MessageProperties();</span><br><span class="line">	props.setHeader(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">	Message message = converter.toMessage(order, props);</span><br><span class="line">	rabbit.send(<span class="string">"tacocloud.order"</span>, message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">	rabbit.convertAndSend(<span class="string">"tacocloud.order.queue"</span>, order,</span><br><span class="line">		<span class="keyword">new</span> MessagePostProcessor() &#123;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> Message <span class="title">postProcessMessage</span><span class="params">(Message message)</span></span></span><br><span class="line"><span class="function">				<span class="keyword">throws</span> AmqpException </span>&#123;</span><br><span class="line">				MessageProperties props = message.getMessageProperties();</span><br><span class="line">				props.setHeader(<span class="string">"X_ORDER_SOURCE"</span>, <span class="string">"WEB"</span>);</span><br><span class="line">				<span class="keyword">return</span> message;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="从RabbitMQ接收消息"><a href="#从RabbitMQ接收消息" class="headerlink" title="从RabbitMQ接收消息"></a>从RabbitMQ接收消息</h4><p>几个关键方法：</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Receive messages</span></span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">()</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">(String queueName)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">(<span class="keyword">long</span> timeoutMillis)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Message <span class="title">receive</span><span class="params">(String queueName, <span class="keyword">long</span> timeoutMillis)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="comment">// Receive objects converted from messages</span></span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">()</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">(String queueName)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">(<span class="keyword">long</span> timeoutMillis)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line"><span class="function">Object <span class="title">receiveAndConvert</span><span class="params">(String queueName, <span class="keyword">long</span> timeoutMillis)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">AmqpException</span>;</span><br><span class="line"><span class="comment">// Receive type-safe objects converted from messages</span></span><br><span class="line">&lt;T&gt; <span class="function">T <span class="title">receiveAndConvert</span><span class="params">(ParameterizedTypeReference&lt;T&gt; type)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">AmqpException</span>;</span><br><span class="line">&lt;T&gt; <span class="function">T <span class="title">receiveAndConvert</span><span class="params">(String queueName, ParameterizedTypeReference&lt;T&gt; type)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line">&lt;T&gt; <span class="function">T <span class="title">receiveAndConvert</span><span class="params">(<span class="keyword">long</span> timeoutMillis, ParameterizedTypeReference&lt;T&gt;</span></span></span><br><span class="line"><span class="function"><span class="params">type)</span> <span class="keyword">throws</span> AmqpException</span>;</span><br><span class="line">&lt;T&gt; <span class="function">T <span class="title">receiveAndConvert</span><span class="params">(String queueName, <span class="keyword">long</span> timeoutMillis,</span></span></span><br><span class="line"><span class="function"><span class="params">ParameterizedTypeReference&lt;T&gt; type)</span></span></span><br><span class="line"><span class="function"><span class="keyword">throws</span> AmqpException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>案例：</p>
+<figure class="highlight java"><figcaption><span>[1.代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitOrderReceiver</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> RabbitTemplate rabbit;</span><br><span class="line">	<span class="keyword">private</span> MessageConverter converter;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">RabbitOrderReceiver</span><span class="params">(RabbitTemplate rabbit)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.rabbit = rabbit;</span><br><span class="line">		<span class="keyword">this</span>.converter = rabbit.getMessageConverter();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Message message = rabbit.receive(<span class="string">"tacocloud.orders"</span>);</span><br><span class="line">		<span class="keyword">return</span> message != <span class="keyword">null</span></span><br><span class="line">			? (Order) converter.fromMessage(message)</span><br><span class="line">			: <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 1.延迟30000毫秒接收</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Message message = rabbit.receive(<span class="string">"tacocloud.order.queue"</span>, <span class="number">30000</span>);</span><br><span class="line">		<span class="keyword">return</span> message != <span class="keyword">null</span></span><br><span class="line">			? (Order) converter.fromMessage(message)</span><br><span class="line">			: <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 2-1消息转换器接收</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (Order) rabbit.receiveAndConvert(<span class="string">"tacocloud.order.queue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 2-2.消息转换器接收</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">receiveOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> rabbit.receiveAndConvert(<span class="string">"tacocloud.order.queue"</span>,</span><br><span class="line">			<span class="keyword">new</span> ParameterizedTypeReference&lt;Order&gt;() &#123;&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><figcaption><span>[2.spring.yml配置文件]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">	rabbitmq:</span><br><span class="line">		template:</span><br><span class="line">			receive-timeout: <span class="number">30000</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用侦听器处理RABBITMQ消息"><a href="#使用侦听器处理RABBITMQ消息" class="headerlink" title="使用侦听器处理RABBITMQ消息"></a>使用侦听器处理RABBITMQ消息</h4><figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderListener</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> KitchenUI ui;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">OrderListener</span><span class="params">(KitchenUI ui)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.ui = ui;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@RabbitListener</span>(queues = <span class="string">"tacocloud.order.queue"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">receiveOrder</span><span class="params">(Order order)</span> </span>&#123;</span><br><span class="line">		ui.displayOrder(order);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>消息传递与Kafka（略）<br><img src="/images/spring-ch2-007.png" alt="Alt text"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/04/%E7%AC%AC%E4%B8%80%E7%AB%A0-Spring%E5%9F%BA%E7%A1%80/" rel="next" title="第一章-Spring基础">
+                <i class="fa fa-chevron-left"></i> 第一章-Spring基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">linestyle</p>
+              <p class="site-description motion-element" itemprop="description">api coder</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#构建一个REST服务"><span class="nav-number">1.</span> <span class="nav-text">构建一个REST服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#允许XML输出"><span class="nav-number">1.1.</span> <span class="nav-text">允许XML输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#url传参"><span class="nav-number">1.2.</span> <span class="nav-text">url传参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#url返回404"><span class="nav-number">1.3.</span> <span class="nav-text">url返回404</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用REST服务"><span class="nav-number">2.</span> <span class="nav-text">使用REST服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用RestTemplate使用REST端点"><span class="nav-number">2.1.</span> <span class="nav-text">使用RestTemplate使用REST端点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置RestTemplate"><span class="nav-number">2.1.1.</span> <span class="nav-text">配置RestTemplate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获得资源（Getting-resouces）"><span class="nav-number">2.1.2.</span> <span class="nav-text">获得资源（Getting resouces）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新资源（Putting-resouces）"><span class="nav-number">2.1.3.</span> <span class="nav-text">更新资源（Putting resouces）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除资源（DELETEing-resources）"><span class="nav-number">2.1.4.</span> <span class="nav-text">删除资源（DELETEing resources）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发布资源（POSTing-resource-data）"><span class="nav-number">2.1.5.</span> <span class="nav-text">发布资源（POSTing resource data）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步发送消息"><span class="nav-number">3.</span> <span class="nav-text">异步发送消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用JMS发送消息"><span class="nav-number">3.1.</span> <span class="nav-text">使用JMS发送消息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装JMS"><span class="nav-number">3.1.1.</span> <span class="nav-text">安装JMS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用JmsTemplate发送消息"><span class="nav-number">3.1.2.</span> <span class="nav-text">使用JmsTemplate发送消息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#编写发送方法"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">编写发送方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#指定发送目的地"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">指定发送目的地</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#发送前对消息进行转换"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">发送前对消息进行转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置消息转换器"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">配置消息转换器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#后期处理消息"><span class="nav-number">3.1.2.5.</span> <span class="nav-text">后期处理消息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接收JMS消息"><span class="nav-number">3.1.3.</span> <span class="nav-text">接收JMS消息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#接收JMS-TEMPLATE"><span class="nav-number">3.1.3.1.</span> <span class="nav-text">接收JMS TEMPLATE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#定义消息监听器"><span class="nav-number">3.1.3.2.</span> <span class="nav-text">定义消息监听器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用RabbitMQ-and-AMQP"><span class="nav-number">3.2.</span> <span class="nav-text">使用RabbitMQ and AMQP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#向Spring添加RabbitMQ"><span class="nav-number">3.2.1.</span> <span class="nav-text">向Spring添加RabbitMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用RabbitTemplate发送消息"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">使用RabbitTemplate发送消息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置消息转换器-1"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">配置消息转换器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#设置消息属性"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">设置消息属性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从RabbitMQ接收消息"><span class="nav-number">3.2.2.</span> <span class="nav-text">从RabbitMQ接收消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用侦听器处理RABBITMQ消息"><span class="nav-number">3.2.3.</span> <span class="nav-text">使用侦听器处理RABBITMQ消息</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">linestyle</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
