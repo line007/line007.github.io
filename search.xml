@@ -1,6 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第三章-spring原生云</title>
+    <url>/2019/11/06/%E7%AC%AC%E4%B8%89%E7%AB%A0-spring%E5%8E%9F%E7%94%9F%E4%BA%91/</url>
+    <content><![CDATA[<p>本章介绍了服务注册中心Eureka的使用攻略，包括设置服务注册中心、服务注册与发现、引用负载均衡器、断路器Hystrix以及处理故障和延迟。</p>
+<h2 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h2><h3 id="微服务编程思想"><a href="#微服务编程思想" class="headerlink" title="微服务编程思想"></a>微服务编程思想</h3><p>单片应用程序看似简单，但却存在一些挑战：</p>
+<ul>
+<li>理解难：随着代码基数越大</li>
+<li>测试难</li>
+<li>容易发生lib库冲突</li>
+<li>效率低下</li>
+<li>技术更新难：技术决策要考虑整个应用程序</li>
+<li>上生产难：需要大量的人力物力测试</li>
+</ul>
+<p>应用架构、微服务架构有以下特点：</p>
+<ul>
+<li>容易理解</li>
+<li>容易测试</li>
+<li>微服务不太可能受到库不兼容的影响</li>
+<li>微服务是独立伸缩的</li>
+<li>每个微服务都能独立技术选型</li>
+<li>微服务可以更频繁地发布到生产环境中</li>
+</ul>
+<h3 id="设置服务注册中心"><a href="#设置服务注册中心" class="headerlink" title="设置服务注册中心"></a>设置服务注册中心</h3><p>Spring Cloud是一个相当大的伞形项目，由几个独立的子项目组成，每个子项目都以某种方式支持微服务开发。其中一个子项目是Spring Cloud Netflix，它提供了来自Netflix开放源代码组合的几个组件，其中包含一个Spring twist。其中包括Netflix服务注册中心Eureka。</p>
+<h4 id="Eureka服务注册和发现图："><a href="#Eureka服务注册和发现图：" class="headerlink" title="Eureka服务注册和发现图："></a>Eureka服务注册和发现图：</h4><p><img src="/images/spring-ch3-001.png" alt="Alt text"></p>
+<h4 id="为什么使用客户端负载均衡器"><a href="#为什么使用客户端负载均衡器" class="headerlink" title="为什么使用客户端负载均衡器"></a>为什么使用客户端负载均衡器</h4><p>通常，负载平衡器被认为是一个单独的集中式服务，它处理所有请求并将它们分布到目标的多个实例上。相比之下,Ribbon是一个客户端负载均衡器，对于每个发出请求的客户端都是本地的。<br>优点：</p>
+<ul>
+<li>因为每个客户机都有一个本地负载均衡器，所以负载均衡器自然地与客户机的数量成比例。</li>
+<li>可以将每个负载均衡器配置为采用最适合每个客户机的负载平衡算法，而不是对所有服务应用相同的配置。</li>
+</ul>
+<p>步骤：</p>
+<ol>
+<li><p>添加依赖</p>
+<figure class="highlight html"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">spring-cloud.version</span>&gt;</span>Finchley.SR1<span class="tag">&lt;/<span class="name">spring-cloud.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-cloud.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启用Eureka服务器。<br>打开应用程序的主引导类，并使用@EnableEurekaServer注释它。</p>
+<figure class="highlight java"><figcaption><span>[代码块]</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceRegistryApplication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(ServiceRegistryApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试<br><img src="/images/spring-ch3-002.png" alt="Alt text"></p>
+</li>
+</ol>
+<h4 id="配置Eureka"><a href="#配置Eureka" class="headerlink" title="配置Eureka"></a>配置Eureka</h4><figure class="highlight java"><figcaption><span>[1.application.yml]</span></figcaption><table><tr><td class="code"><pre><span class="line">eureka:</span><br><span class="line">	instance:</span><br><span class="line">		hostname: localhost</span><br><span class="line">	client:</span><br><span class="line">		fetch-registry: <span class="keyword">false</span></span><br><span class="line">		register-with-eureka: <span class="keyword">false</span></span><br><span class="line">		service-url:</span><br><span class="line">			defaultZone: http:<span class="comment">//$&#123;eureka.instance.hostname&#125;:$&#123;server.port&#125;/eureka</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><figcaption><span>[2.指定EUREKA的服务器端口]</span></figcaption><table><tr><td class="code"><pre><span class="line">server:</span><br><span class="line">	port: <span class="number">8761</span></span><br></pre></td></tr></table></figure>    
+<figure class="highlight java"><figcaption><span>[3.禁用SELF-PERSERVATION模式]</span></figcaption><table><tr><td class="code"><pre><span class="line">eureka:</span><br><span class="line">	...</span><br><span class="line">	server:</span><br><span class="line">		enable-self-preservation: <span class="keyword">false</span></span><br></pre></td></tr></table></figure>    
+
+<h4 id="扩展Eureka"><a href="#扩展Eureka" class="headerlink" title="扩展Eureka"></a>扩展Eureka</h4><p>使用Spring配置文件为两个对等点配置Eureka：<br><img src="/images/spring-ch3-003.png" alt="Alt text"></p>
+<h3 id="注册和发现服务"><a href="#注册和发现服务" class="headerlink" title="注册和发现服务"></a>注册和发现服务</h3><ol>
+<li><p>配置Eureka客户端属性<br><img src="/images/spring-ch3-004.png" alt="Alt text"></p>
+</li>
+<li><p>消费服务</p>
+</li>
+</ol>
+<ul>
+<li>RestTemplate</li>
+<li>Feign-generated客户端接口</li>
+</ul>
+<p>使用RestTemplate：<br><img src="/images/spring-ch3-005.png" alt="Alt text"></p>
+<p>使用Feign-generated客户端接口：<br><img src="/images/spring-ch3-006.png" alt="Alt text"></p>
+<h2 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h2><h3 id="共享配置"><a href="#共享配置" class="headerlink" title="共享配置"></a>共享配置</h3><p>Spring Cloud Config Server提供了一个集中式的配置，一个应用程序中的所有微服务都可以依赖该服务器进行配置。因为它是集中式的，所以它是所有服务中通用的配置一站式服务，但是它也能够提供特定于给定服务的配置。</p>
+<h3 id="运行配置服务器"><a href="#运行配置服务器" class="headerlink" title="运行配置服务器"></a>运行配置服务器</h3><p>Spring Cloud Config Server为配置数据提供了一个集中的源。<br><img src="/images/spring-ch3-007.png" alt="Alt text"></p>
+<ol>
+<li><p>启用config服务器<br><img src="/images/spring-ch3-008.png" alt="Alt text"></p>
+</li>
+<li><p>填充配置存储库<br><img src="/images/spring-ch3-009.png" alt="Alt text"></p>
+</li>
+</ol>
+<h3 id="使用共享的配置"><a href="#使用共享的配置" class="headerlink" title="使用共享的配置"></a>使用共享的配置</h3><p><img src="/images/spring-ch3-010.png" alt="Alt text"></p>
+<h3 id="服务于特定于应用程序和特定于配置文件的属性"><a href="#服务于特定于应用程序和特定于配置文件的属性" class="headerlink" title="服务于特定于应用程序和特定于配置文件的属性"></a>服务于特定于应用程序和特定于配置文件的属性</h3><p>利用spring.application.name属性来指定对应服务的配置文件。</p>
+<ol>
+<li><p>不同服务使用独立的配置文件<br><img src="/images/spring-ch3-011.png" alt="Alt text"></p>
+</li>
+<li><p>使用profiles属性切换配置文件<br><img src="/images/spring-ch3-012.png" alt="Alt text"></p>
+</li>
+</ol>
+<h3 id="对配置属性保密"><a href="#对配置属性保密" class="headerlink" title="对配置属性保密"></a>对配置属性保密</h3><p><img src="/images/spring-ch3-013.png" alt="Alt text"></p>
+<h3 id="动态刷新配置属性"><a href="#动态刷新配置属性" class="headerlink" title="动态刷新配置属性"></a>动态刷新配置属性</h3><h4 id="手动刷新"><a href="#手动刷新" class="headerlink" title="手动刷新"></a>手动刷新</h4><p><img src="/images/spring-ch3-014.png" alt="Alt text"></p>
+<h4 id="自动刷新"><a href="#自动刷新" class="headerlink" title="自动刷新"></a>自动刷新</h4><p><img src="/images/spring-ch3-015.png" alt="Alt text"></p>
+<ol>
+<li>创建WEBHOOK<br><img src="/images/spring-ch3-016.png" alt="Alt text"></li>
+<li>在配置服务器中处理WEBHOOK更新<br><img src="/images/spring-ch3-017.png" alt="Alt text"></li>
+<li>创建GOGS通知提取器<br><img src="/images/spring-ch3-018.png" alt="Alt text"></li>
+<li>在配置服务器客户端启用自动刷新<br><img src="/images/spring-ch3-019.png" alt="Alt text"></li>
+</ol>
+<h2 id="处理故障和延迟"><a href="#处理故障和延迟" class="headerlink" title="处理故障和延迟"></a>处理故障和延迟</h2><h3 id="了解断路器"><a href="#了解断路器" class="headerlink" title="了解断路器"></a>了解断路器</h3><p>在为他们的断路器实现起名字的时候，Netflix的开发人员想要一个能抓住弹性、防御和容错的名字。他们选定了海斯特里克斯(Hystrix)，这是一种被称为“旧世界豪猪”(Old-World porcupine)的动物，这种动物的特点是能够用长刺自卫。<br>常见异常：</p>
+<ul>
+<li>调用REST的方法</li>
+<li>执行数据库查询的方法</li>
+<li>潜在的慢方法<br><img src="/images/spring-ch3-020.png" alt="Alt text"></li>
+</ul>
+<h3 id="定义断路器"><a href="#定义断路器" class="headerlink" title="定义断路器"></a>定义断路器</h3><p><img src="/images/spring-ch3-021.png" alt="Alt text"><br>管理断路器阀值：<br><img src="/images/spring-ch3-022.png" alt="Alt text"></p>
+<h3 id="监控失败"><a href="#监控失败" class="headerlink" title="监控失败"></a>监控失败</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p><img src="/images/spring-ch3-023.png" alt="Alt text"></p>
+<h4 id="介绍Hystrix仪表板"><a href="#介绍Hystrix仪表板" class="headerlink" title="介绍Hystrix仪表板"></a>介绍Hystrix仪表板</h4><p><img src="/images/spring-ch3-024.png" alt="Alt text"></p>
+<h4 id="理解Hystrix线程池"><a href="#理解Hystrix线程池" class="headerlink" title="理解Hystrix线程池"></a>理解Hystrix线程池</h4><p><img src="/images/spring-ch3-025.png" alt="Alt text"></p>
+<h4 id="聚合多个Hystrix流"><a href="#聚合多个Hystrix流" class="headerlink" title="聚合多个Hystrix流"></a>聚合多个Hystrix流</h4><p><img src="/images/spring-ch3-026.png" alt="Alt text"></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第二章-集成spring</title>
     <url>/2019/11/05/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E9%9B%86%E6%88%90spring/</url>
     <content><![CDATA[<p>本章主要介绍了spring REST服务以及与JMS、RabbitMQ的集成。</p>
