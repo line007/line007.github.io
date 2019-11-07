@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM和GC解析," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JVM垃圾回收时如何确定垃圾？什么是垃圾简单的说就是内存中已经不再被使用到的空间就是垃圾。 要进行垃圾回收，如何判断一个对象是否可以被回收？ 引用计数法   枚举根节点做可达性分析（根搜索路径）  案例：  Java中可以作为GCRoots的对象：  虚拟机栈 （栈帧中本地变量）中引用的对象 方法区中类静态属性引用的对象 方法区中常量引用的对象 本地方法栈中JNI（Native）引用的对象">
+<meta name="keywords" content="JVM和GC解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章-JVM线上案例分析">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;07&#x2F;%E7%AC%AC%E4%BA%8C%E7%AB%A0-JVM%E7%BA%BF%E4%B8%8A%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90&#x2F;index.html">
+<meta property="og:site_name" content="一颗小草">
+<meta property="og:description" content="JVM垃圾回收时如何确定垃圾？什么是垃圾简单的说就是内存中已经不再被使用到的空间就是垃圾。 要进行垃圾回收，如何判断一个对象是否可以被回收？ 引用计数法   枚举根节点做可达性分析（根搜索路径）  案例：  Java中可以作为GCRoots的对象：  虚拟机栈 （栈帧中本地变量）中引用的对象 方法区中类静态属性引用的对象 方法区中常量引用的对象 本地方法栈中JNI（Native）引用的对象">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135041445.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135052329.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135119813.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135529325.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135949381.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140014832.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140212106.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140259138.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140452601.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140516522.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140529680.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140604482.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140615889.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140640395.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140705479.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140732376.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140814322.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140939735.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140949807.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107140959835.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141011179.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141021808.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141038468.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141056572.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141122690.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141258875.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141234365.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141429408.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141544236.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141643259.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141733417.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141813869.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107141823653.png">
+<meta property="og:image" content="c:%5CUsers%5CCzz%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20191107141835782.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142028848.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142133689.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142349883.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142515620.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142545907.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142632872.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142644124.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107142653123.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143033185.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143042588.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143133049.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143201594.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143236114.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143339451.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143350158.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143553680.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107143657206.png">
+<meta property="og:updated_time" content="2019-11-07T06:38:18.127Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;images&#x2F;jvm&#x2F;image-20191107135041445.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/07/第二章-JVM线上案例分析/"/>
+
+
+
+
+
+  <title>第二章-JVM线上案例分析 | 一颗小草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一颗小草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">好好学习，天天向上</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/categories/Java" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            学习
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/07/%E7%AC%AC%E4%BA%8C%E7%AB%A0-JVM%E7%BA%BF%E4%B8%8A%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="linestyle">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一颗小草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">第二章-JVM线上案例分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-07T13:48:42+08:00">
+                2019-11-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JVM垃圾回收时如何确定垃圾？"><a href="#JVM垃圾回收时如何确定垃圾？" class="headerlink" title="JVM垃圾回收时如何确定垃圾？"></a>JVM垃圾回收时如何确定垃圾？</h1><h2 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h2><p>简单的说就是内存中已经不再被使用到的空间就是垃圾。</p>
+<h2 id="要进行垃圾回收，如何判断一个对象是否可以被回收？"><a href="#要进行垃圾回收，如何判断一个对象是否可以被回收？" class="headerlink" title="要进行垃圾回收，如何判断一个对象是否可以被回收？"></a>要进行垃圾回收，如何判断一个对象是否可以被回收？</h2><ol>
+<li><p>引用计数法</p>
+<p><img src="/images/jvm/image-20191107135041445.png" alt="image-20191107135041445"></p>
+</li>
+<li><p>枚举根节点做可达性分析（根搜索路径）</p>
+<p><img src="/images/jvm/image-20191107135052329.png" alt="image-20191107135052329"></p>
+<p><strong>案例：</strong></p>
+<p><img src="/images/jvm/image-20191107135119813.png" alt="image-20191107135119813"></p>
+<p><strong>Java中可以作为GCRoots的对象：</strong></p>
+<ul>
+<li>虚拟机栈 （栈帧中本地变量）中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中JNI（Native）引用的对象</li>
+</ul>
+</li>
+</ol>
+<h1 id="如何盘点查看JVM默认值"><a href="#如何盘点查看JVM默认值" class="headerlink" title="如何盘点查看JVM默认值"></a>如何盘点查看JVM默认值</h1><h2 id="JVM的参数类型"><a href="#JVM的参数类型" class="headerlink" title="JVM的参数类型"></a>JVM的参数类型</h2><h3 id="标配参数"><a href="#标配参数" class="headerlink" title="标配参数"></a>标配参数</h3><ul>
+<li>-version</li>
+<li>-help</li>
+<li>java -showversion</li>
+</ul>
+<h3 id="X参数"><a href="#X参数" class="headerlink" title="X参数"></a>X参数</h3><ul>
+<li>-Xint：解释执行</li>
+<li>-Xcomp：第一次使用就编译成本地代码</li>
+<li>-Xmixed：混合模式</li>
+</ul>
+<h3 id="XX参数"><a href="#XX参数" class="headerlink" title="XX参数"></a>XX参数</h3><ol>
+<li><p>Boolean类型</p>
+<p>公式：<strong>-XX:+或者-某个属性值</strong></p>
+<p>是否打印GC回收细节：<strong>-XX:+PrintGCDetails</strong></p>
+<p>是否使用串行垃圾回收器：<strong>-XX:+PrintCommandLineFlags</strong></p>
+</li>
+<li><p>KV设值类型</p>
+<p>公式：<strong>-XX:属性key=属性值value</strong></p>
+<p>案例：</p>
+<p>-XX:MetaspaceSize=128m</p>
+<p>-XX:MaxTernuringThreshold</p>
+</li>
+<li><p>其它</p>
+<p>​    <img src="/images/jvm/image-20191107135529325.png" alt="image-20191107135529325"></p>
+</li>
+</ol>
+<h2 id="盘点家底查看JVM默认值"><a href="#盘点家底查看JVM默认值" class="headerlink" title="盘点家底查看JVM默认值"></a>盘点家底查看JVM默认值</h2><ol>
+<li><p>-XX:+PrintFlagsInital</p>
+<p>查看初始默认值。</p>
+<p>公式：</p>
+<ul>
+<li>java -XX:+PrintFlagsInital version</li>
+<li>java -XX:+PrintFlagsInital</li>
+</ul>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107135949381.png" alt="image-20191107135949381"></p>
+</li>
+<li><p>-XX:+PrintFlagsFinal</p>
+</li>
+<li><p>PrintFlagsFinal举例，运行java的同时打印参数</p>
+</li>
+<li><p>-XX:+PrintCommandLineFlags</p>
+<p>查看默认垃圾收集器。</p>
+<p><img src="/images/jvm/image-20191107140014832.png" alt="image-20191107140014832"></p>
+</li>
+</ol>
+<h1 id="工作用过的JVM常用基本配置参数"><a href="#工作用过的JVM常用基本配置参数" class="headerlink" title="工作用过的JVM常用基本配置参数"></a>工作用过的JVM常用基本配置参数</h1><h2 id="基础知识复习"><a href="#基础知识复习" class="headerlink" title="基础知识复习"></a>基础知识复习</h2><p><img src="/images/jvm/image-20191107140212106.png" alt="image-20191107140212106"></p>
+<h2 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h2><p><img src="/images/jvm/image-20191107140259138.png" alt="image-20191107140259138"></p>
+<p>典型设置案例：</p>
+<p><strong>-Xms128m -Xmx4096 -Xss1024k -XX:MetaspaceSize=512m -XX:+PrintCommandLineFlags -XX:+PrintGCDetails -XX:+UseSerialGC</strong></p>
+<h1 id="强、弱、软、虚引用分别是什么？"><a href="#强、弱、软、虚引用分别是什么？" class="headerlink" title="强、弱、软、虚引用分别是什么？"></a>强、弱、软、虚引用分别是什么？</h1><h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2><p><img src="/images/jvm/image-20191107140452601.png" alt="image-20191107140452601"></p>
+<h2 id="强引用（默认支持模式）"><a href="#强引用（默认支持模式）" class="headerlink" title="强引用（默认支持模式）"></a>强引用（默认支持模式）</h2><p><img src="/images/jvm/image-20191107140516522.png" alt="image-20191107140516522"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107140529680.png" alt="image-20191107140529680"></p>
+<h2 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h2><p><img src="/images/jvm/image-20191107140604482.png" alt="image-20191107140604482"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107140615889.png" alt="image-20191107140615889"></p>
+<h2 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h2><p>案例：</p>
+<p><img src="/images/jvm/image-20191107140640395.png" alt="image-20191107140640395"></p>
+<p><strong>软引用与弱引用适用场景：</strong></p>
+<p><img src="/images/jvm/image-20191107140705479.png" alt="image-20191107140705479"></p>
+<h3 id="你知道弱引用，能谈谈WeakHashMap吗"><a href="#你知道弱引用，能谈谈WeakHashMap吗" class="headerlink" title="你知道弱引用，能谈谈WeakHashMap吗"></a>你知道弱引用，能谈谈WeakHashMap吗</h3><p><img src="/images/jvm/image-20191107140732376.png" alt="image-20191107140732376"></p>
+<h2 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h2><h2 id="GCRoots和四大引用总结"><a href="#GCRoots和四大引用总结" class="headerlink" title="GCRoots和四大引用总结"></a>GCRoots和四大引用总结</h2><p><img src="/images/jvm/image-20191107140814322.png" alt="image-20191107140814322"></p>
+<h1 id="谈谈你对OMM的认识"><a href="#谈谈你对OMM的认识" class="headerlink" title="谈谈你对OMM的认识"></a>谈谈你对OMM的认识</h1><ol>
+<li><p>java.lang.StackOverFlowExceptioin</p>
+<p><img src="/images/jvm/image-20191107140939735.png" alt="image-20191107140939735"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Java heap space</p>
+<p><img src="/images/jvm/image-20191107140949807.png" alt="image-20191107140949807"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：GC overhead limit exceeded</p>
+<p><img src="/images/jvm/image-20191107140959835.png" alt="image-20191107140959835"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Direct buffer memory</p>
+<p><img src="/images/jvm/image-20191107141011179.png" alt="image-20191107141011179"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：unable to create new native thread</p>
+<p><img src="/images/jvm/image-20191107141021808.png" alt="image-20191107141021808"></p>
+<p>服务器级别参数调优：</p>
+<p><img src="/images/jvm/image-20191107141038468.png" alt="image-20191107141038468"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Metaspace</p>
+<p>Java以后的JVM：</p>
+<p><img src="/images/jvm/image-20191107141056572.png" alt="image-20191107141056572"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107141122690.png" alt="image-20191107141122690"></p>
+</li>
+</ol>
+<h1 id="GC回收算法与垃圾回收器的关系？"><a href="#GC回收算法与垃圾回收器的关系？" class="headerlink" title="GC回收算法与垃圾回收器的关系？"></a>GC回收算法与垃圾回收器的关系？</h1><ol>
+<li><p>GC算法(引用计数/复制/标清/标整)是内存回收的方法论，垃圾收集器就是算法落地实现。</p>
+</li>
+<li><p>因为目前为止还没有完美的收集器出现，更加没有万能的收集器，只是针对具体应用最合适的收集器，进行分代收集</p>
+</li>
+<li><p>4种主要的垃圾收集器</p>
+<p><img src="/images/jvm/image-20191107141258875.png" alt="image-20191107141258875"></p>
+<p><img src="/images/jvm/image-20191107141234365.png" alt="image-20191107141234365"></p>
+</li>
+</ol>
+<h1 id="生产上你是如何配置垃圾收集器的？"><a href="#生产上你是如何配置垃圾收集器的？" class="headerlink" title="生产上你是如何配置垃圾收集器的？"></a>生产上你是如何配置垃圾收集器的？</h1><h2 id="怎么查看默认垃圾回收器是哪个"><a href="#怎么查看默认垃圾回收器是哪个" class="headerlink" title="怎么查看默认垃圾回收器是哪个"></a>怎么查看默认垃圾回收器是哪个</h2><p>java -XX:+PrintCommandLineFlags -version</p>
+<p><img src="/images/jvm/image-20191107141429408.png" alt="image-20191107141429408"></p>
+<h2 id="默认垃圾回收器有哪些？"><a href="#默认垃圾回收器有哪些？" class="headerlink" title="默认垃圾回收器有哪些？"></a>默认垃圾回收器有哪些？</h2><ul>
+<li>UseSerialGC</li>
+<li>UseParalelGC</li>
+<li>UseConcMarkSweepGC</li>
+<li>UseParNewGC</li>
+<li>UseParallelOldGC</li>
+<li>UseG1GC</li>
+</ul>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p><img src="/images/jvm/image-20191107141544236.png" alt="image-20191107141544236"></p>
+<h3 id="参数预先说明"><a href="#参数预先说明" class="headerlink" title="参数预先说明"></a>参数预先说明</h3><p><img src="/images/jvm/image-20191107141643259.png" alt="image-20191107141643259"></p>
+<h3 id="Server-Client模式分别是什么意思"><a href="#Server-Client模式分别是什么意思" class="headerlink" title="Server/Client模式分别是什么意思"></a>Server/Client模式分别是什么意思</h3><p><img src="/images/jvm/image-20191107141733417.png" alt="image-20191107141733417"></p>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li><p>串行GC(Serial)/(Serial Copying)</p>
+<p><img src="/images/jvm/image-20191107141813869.png" alt="image-20191107141813869"></p>
+</li>
+<li><p>并行GC(ParNew)</p>
+<p><img src="/images/jvm/image-20191107141823653.png" alt="image-20191107141823653"></p>
+</li>
+<li><p>并行回收GC(Parallel)/(Parallel Scavenge)</p>
+<p><img src="C:%5CUsers%5CCzz%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20191107141835782.png" alt="image-20191107141835782"></p>
+</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li><p>串行GC。</p>
+</li>
+<li><p>并行GC(Parallel Old)/(Parallel MSC)</p>
+<p><img src="/images/jvm/image-20191107142028848.png" alt="image-20191107142028848"></p>
+</li>
+<li><p>并发标记清除GC(CMS)</p>
+<p>4个步骤：</p>
+<p><img src="/images/jvm/image-20191107142133689.png" alt="image-20191107142133689"></p>
+<ul>
+<li>初始化标记(CMS init Mark)</li>
+<li>并发标记(CMR concurrent mark)和用户线程一起</li>
+<li>重新标记</li>
+<li>并发清除</li>
+</ul>
+<p>优缺点：</p>
+<ul>
+<li>优点：并发收集，低停顿</li>
+<li>缺点：并发执行对CPU压力大</li>
+<li>缺点：采用标记清除算法会导致大量碎片</li>
+</ul>
+</li>
+</ol>
+<h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@desc</span></span></span><br><span class="line"><span class="comment"> * 1.</span></span><br><span class="line"><span class="comment"> * 2</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParNewGC  (ParNew[par new generation] + Tenured[tenured generation])</span></span><br><span class="line"><span class="comment"> *  备注情况：Java HotSpot(TM) 64-Bit Server VM warning:</span></span><br><span class="line"><span class="comment"> *  Using the ParNew young collector with the Serial old collector is deprecated</span></span><br><span class="line"><span class="comment"> *  and will likely be removed in a future release</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 3</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParallelGC   (PSYoungGen + ParOldGen)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 4</span></span><br><span class="line"><span class="comment"> * 4.1</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParallelOldGC  (PSYoungGen + ParOldGen)</span></span><br><span class="line"><span class="comment"> * 4.2 不加就默认UseParallelGC</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 5</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseConcMarkSweepGC  （parNew + concurrent mark-sweep generation）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 6</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseG1GC     （garbage-first heap）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 7（理论知道即可，实际中已经被优化掉了，没有了。）</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseSerialOldGC</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> xw</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2019/8/28</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GCDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="string">"aaa"</span>;</span><br><span class="line">        System.out.println(<span class="string">"GC test"</span>);</span><br><span class="line">        str = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="垃圾收集器配置代码总结"><a href="#垃圾收集器配置代码总结" class="headerlink" title="垃圾收集器配置代码总结"></a>垃圾收集器配置代码总结</h3><p><img src="/images/jvm/image-20191107142349883.png" alt="image-20191107142349883"></p>
+<h1 id="G1垃圾收集器"><a href="#G1垃圾收集器" class="headerlink" title="G1垃圾收集器"></a>G1垃圾收集器</h1><h2 id="以前垃圾回收器的特点"><a href="#以前垃圾回收器的特点" class="headerlink" title="以前垃圾回收器的特点"></a>以前垃圾回收器的特点</h2><ul>
+<li>年轻代和老年代是各自独立连续的内存块</li>
+<li>年轻代收集使用单eden+S0+S1进行复制算法</li>
+<li>老年代收集必须扫描整个老年代区域</li>
+<li>都是以尽可能少而快地执行GC为设计原则</li>
+</ul>
+<h2 id="G1是什么"><a href="#G1是什么" class="headerlink" title="G1是什么"></a>G1是什么</h2><p><img src="/images/jvm/image-20191107142515620.png" alt="image-20191107142515620"></p>
+<p>特点：</p>
+<p><img src="/images/jvm/image-20191107142545907.png" alt="image-20191107142545907"></p>
+<h2 id="底层原理"><a href="#底层原理" class="headerlink" title="底层原理"></a>底层原理</h2><ol>
+<li><p>Region区域化垃圾收集器</p>
+<p><img src="/images/jvm/image-20191107142632872.png" alt="image-20191107142632872"></p>
+</li>
+<li><p>回收步骤</p>
+<p><img src="/images/jvm/image-20191107142644124.png" alt="image-20191107142644124"></p>
+</li>
+<li><p>4步过程</p>
+<p><img src="/images/jvm/image-20191107142653123.png" alt="image-20191107142653123"></p>
+</li>
+</ol>
+<h2 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@desc</span></span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+UseG1GC</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> xw</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2019/8/28</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">G1Demo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="string">"abc"</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            str += str + <span class="keyword">new</span> Random().nextInt(<span class="number">77777777</span>) + <span class="keyword">new</span> Random().nextInt(<span class="number">88888888</span>);</span><br><span class="line">            str.intern();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用配置参数"><a href="#常用配置参数" class="headerlink" title="常用配置参数"></a>常用配置参数</h2><p>开发人员仅仅需要声明以下参数即可：</p>
+<p><strong>三步归纳：开始G1+设置最大内存+设置最大停顿时间</strong></p>
+<p><strong>-XX:+UseG1GC       -Xmx32g        -XX:MaxGCPauseMillis=100</strong></p>
+<p><strong>-XX:MaxGCPauseMillis=n：</strong>最大GC停顿时间单位毫秒，这是个软目标，JVM将尽可能（但不保证）停顿小于这个时间</p>
+<h2 id="和CMS相比的优势"><a href="#和CMS相比的优势" class="headerlink" title="和CMS相比的优势"></a>和CMS相比的优势</h2><ul>
+<li>G1不会产生内存碎片</li>
+<li>是可以精确控制停顿。该收集器是把整个堆（新生代、老年代）划分多个固定大小的区域，每次根据允许停顿的时间去收集垃圾最多的区域。</li>
+</ul>
+<h1 id="生产环境服务器变慢，诊断思路和性能评估谈谈？"><a href="#生产环境服务器变慢，诊断思路和性能评估谈谈？" class="headerlink" title="生产环境服务器变慢，诊断思路和性能评估谈谈？"></a>生产环境服务器变慢，诊断思路和性能评估谈谈？</h1><h2 id="整机：top"><a href="#整机：top" class="headerlink" title="整机：top"></a>整机：top</h2><p>update，系统命令的精简版。</p>
+<h2 id="CPU：vmstat"><a href="#CPU：vmstat" class="headerlink" title="CPU：vmstat"></a>CPU：vmstat</h2><ol>
+<li><p>查看CPU(包含不限于)</p>
+<p><img src="/images/jvm/image-20191107143033185.png" alt="image-20191107143033185"></p>
+</li>
+<li><p>查看额外</p>
+<p><img src="/images/jvm/image-20191107143042588.png" alt="image-20191107143042588"></p>
+</li>
+</ol>
+<h2 id="内存：free"><a href="#内存：free" class="headerlink" title="内存：free"></a>内存：free</h2><ol>
+<li><p>应用程序可用内存数。</p>
+<p><img src="/images/jvm/image-20191107143133049.png" alt="image-20191107143133049"></p>
+</li>
+<li><p>查看额外</p>
+<p>pidstat -p 进程号 -r 采样间隔秒数</p>
+</li>
+</ol>
+<h2 id="硬盘：df"><a href="#硬盘：df" class="headerlink" title="硬盘：df"></a>硬盘：df</h2><p>查看磁盘剩余空间。</p>
+<p><img src="/images/jvm/image-20191107143201594.png" alt="image-20191107143201594"></p>
+<h2 id="磁盘IO：iostat"><a href="#磁盘IO：iostat" class="headerlink" title="磁盘IO：iostat"></a>磁盘IO：iostat</h2><ol>
+<li><p>磁盘IO性能评估</p>
+<p><img src="/images/jvm/image-20191107143236114.png" alt="image-20191107143236114"></p>
+</li>
+<li><p>查看额外</p>
+<p>pidstat -p 进程号 -r 采样间隔秒数</p>
+</li>
+</ol>
+<h2 id="网络IO：ifstat"><a href="#网络IO：ifstat" class="headerlink" title="网络IO：ifstat"></a>网络IO：ifstat</h2><ol>
+<li><p>默认本地没有，下载ifstat</p>
+<p><img src="/images/jvm/image-20191107143339451.png" alt="image-20191107143339451"></p>
+</li>
+<li><p>查看网络IO</p>
+<p><img src="/images/jvm/image-20191107143350158.png" alt="image-20191107143350158"></p>
+</li>
+</ol>
+<h1 id="假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位"><a href="#假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位" class="headerlink" title="假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位"></a>假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位</h1><ol>
+<li><p>先用top命令找出CPU占比最高的</p>
+</li>
+<li><p>ps -ef或者jps进一步定位进程</p>
+</li>
+<li><p>定位到具体线程或代码</p>
+<p><strong>ps -mp 进程 -o THREAD,tid,time</strong></p>
+<ul>
+<li>-m 显示所有的线程</li>
+<li>-p pid 进程使用cpu的时间</li>
+<li>-o 该参数后是用户自定义格式</li>
+</ul>
+<p><img src="/images/jvm/image-20191107143553680.png" alt="image-20191107143553680"></p>
+</li>
+<li><p>将需要的<strong>线程ID</strong>转换为16进制格式（英文小写格式）</p>
+<p>printf “%x\n” 有问题的<strong>线程ID</strong></p>
+</li>
+<li><p>jstatck <strong>进程ID</strong> | grep tid（16进制线程ID小写英文）-A60</p>
+<p><img src="/images/jvm/image-20191107143657206.png" alt="image-20191107143657206"></p>
+</li>
+</ol>
+<h1 id="JVM性能监测工具"><a href="#JVM性能监测工具" class="headerlink" title="JVM性能监测工具"></a>JVM性能监测工具</h1><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM%E5%92%8CGC%E8%A7%A3%E6%9E%90/" rel="tag"># JVM和GC解析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/07/%E7%AC%AC%E4%B8%80%E7%AB%A0-JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="next" title="第一章-JVM基础知识">
+                <i class="fa fa-chevron-left"></i> 第一章-JVM基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">linestyle</p>
+              <p class="site-description motion-element" itemprop="description">api coder</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM垃圾回收时如何确定垃圾？"><span class="nav-number">1.</span> <span class="nav-text">JVM垃圾回收时如何确定垃圾？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是垃圾"><span class="nav-number">1.1.</span> <span class="nav-text">什么是垃圾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要进行垃圾回收，如何判断一个对象是否可以被回收？"><span class="nav-number">1.2.</span> <span class="nav-text">要进行垃圾回收，如何判断一个对象是否可以被回收？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何盘点查看JVM默认值"><span class="nav-number">2.</span> <span class="nav-text">如何盘点查看JVM默认值</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM的参数类型"><span class="nav-number">2.1.</span> <span class="nav-text">JVM的参数类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标配参数"><span class="nav-number">2.1.1.</span> <span class="nav-text">标配参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#X参数"><span class="nav-number">2.1.2.</span> <span class="nav-text">X参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XX参数"><span class="nav-number">2.1.3.</span> <span class="nav-text">XX参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#盘点家底查看JVM默认值"><span class="nav-number">2.2.</span> <span class="nav-text">盘点家底查看JVM默认值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工作用过的JVM常用基本配置参数"><span class="nav-number">3.</span> <span class="nav-text">工作用过的JVM常用基本配置参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识复习"><span class="nav-number">3.1.</span> <span class="nav-text">基础知识复习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用参数"><span class="nav-number">3.2.</span> <span class="nav-text">常用参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#强、弱、软、虚引用分别是什么？"><span class="nav-number">4.</span> <span class="nav-text">强、弱、软、虚引用分别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体架构"><span class="nav-number">4.1.</span> <span class="nav-text">整体架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#强引用（默认支持模式）"><span class="nav-number">4.2.</span> <span class="nav-text">强引用（默认支持模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软引用"><span class="nav-number">4.3.</span> <span class="nav-text">软引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#弱引用"><span class="nav-number">4.4.</span> <span class="nav-text">弱引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#你知道弱引用，能谈谈WeakHashMap吗"><span class="nav-number">4.4.1.</span> <span class="nav-text">你知道弱引用，能谈谈WeakHashMap吗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚引用"><span class="nav-number">4.5.</span> <span class="nav-text">虚引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCRoots和四大引用总结"><span class="nav-number">4.6.</span> <span class="nav-text">GCRoots和四大引用总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#谈谈你对OMM的认识"><span class="nav-number">5.</span> <span class="nav-text">谈谈你对OMM的认识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GC回收算法与垃圾回收器的关系？"><span class="nav-number">6.</span> <span class="nav-text">GC回收算法与垃圾回收器的关系？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生产上你是如何配置垃圾收集器的？"><span class="nav-number">7.</span> <span class="nav-text">生产上你是如何配置垃圾收集器的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#怎么查看默认垃圾回收器是哪个"><span class="nav-number">7.1.</span> <span class="nav-text">怎么查看默认垃圾回收器是哪个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#默认垃圾回收器有哪些？"><span class="nav-number">7.2.</span> <span class="nav-text">默认垃圾回收器有哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾收集器"><span class="nav-number">7.3.</span> <span class="nav-text">垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数预先说明"><span class="nav-number">7.3.1.</span> <span class="nav-text">参数预先说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-Client模式分别是什么意思"><span class="nav-number">7.3.2.</span> <span class="nav-text">Server/Client模式分别是什么意思</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新生代"><span class="nav-number">7.3.3.</span> <span class="nav-text">新生代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#老年代"><span class="nav-number">7.3.4.</span> <span class="nav-text">老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">7.3.5.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾收集器配置代码总结"><span class="nav-number">7.3.6.</span> <span class="nav-text">垃圾收集器配置代码总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#G1垃圾收集器"><span class="nav-number">8.</span> <span class="nav-text">G1垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以前垃圾回收器的特点"><span class="nav-number">8.1.</span> <span class="nav-text">以前垃圾回收器的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#G1是什么"><span class="nav-number">8.2.</span> <span class="nav-text">G1是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#底层原理"><span class="nav-number">8.3.</span> <span class="nav-text">底层原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例-1"><span class="nav-number">8.4.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用配置参数"><span class="nav-number">8.5.</span> <span class="nav-text">常用配置参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和CMS相比的优势"><span class="nav-number">8.6.</span> <span class="nav-text">和CMS相比的优势</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生产环境服务器变慢，诊断思路和性能评估谈谈？"><span class="nav-number">9.</span> <span class="nav-text">生产环境服务器变慢，诊断思路和性能评估谈谈？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整机：top"><span class="nav-number">9.1.</span> <span class="nav-text">整机：top</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU：vmstat"><span class="nav-number">9.2.</span> <span class="nav-text">CPU：vmstat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存：free"><span class="nav-number">9.3.</span> <span class="nav-text">内存：free</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬盘：df"><span class="nav-number">9.4.</span> <span class="nav-text">硬盘：df</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘IO：iostat"><span class="nav-number">9.5.</span> <span class="nav-text">磁盘IO：iostat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络IO：ifstat"><span class="nav-number">9.6.</span> <span class="nav-text">网络IO：ifstat</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位"><span class="nav-number">10.</span> <span class="nav-text">假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM性能监测工具"><span class="nav-number">11.</span> <span class="nav-text">JVM性能监测工具</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">linestyle</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

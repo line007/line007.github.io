@@ -1,6 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第二章-JVM线上案例分析</title>
+    <url>/2019/11/07/%E7%AC%AC%E4%BA%8C%E7%AB%A0-JVM%E7%BA%BF%E4%B8%8A%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h1 id="JVM垃圾回收时如何确定垃圾？"><a href="#JVM垃圾回收时如何确定垃圾？" class="headerlink" title="JVM垃圾回收时如何确定垃圾？"></a>JVM垃圾回收时如何确定垃圾？</h1><h2 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h2><p>简单的说就是内存中已经不再被使用到的空间就是垃圾。</p>
+<h2 id="要进行垃圾回收，如何判断一个对象是否可以被回收？"><a href="#要进行垃圾回收，如何判断一个对象是否可以被回收？" class="headerlink" title="要进行垃圾回收，如何判断一个对象是否可以被回收？"></a>要进行垃圾回收，如何判断一个对象是否可以被回收？</h2><ol>
+<li><p>引用计数法</p>
+<p><img src="/images/jvm/image-20191107135041445.png" alt="image-20191107135041445"></p>
+</li>
+<li><p>枚举根节点做可达性分析（根搜索路径）</p>
+<p><img src="/images/jvm/image-20191107135052329.png" alt="image-20191107135052329"></p>
+<p><strong>案例：</strong></p>
+<p><img src="/images/jvm/image-20191107135119813.png" alt="image-20191107135119813"></p>
+<p><strong>Java中可以作为GCRoots的对象：</strong></p>
+<ul>
+<li>虚拟机栈 （栈帧中本地变量）中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中JNI（Native）引用的对象</li>
+</ul>
+</li>
+</ol>
+<h1 id="如何盘点查看JVM默认值"><a href="#如何盘点查看JVM默认值" class="headerlink" title="如何盘点查看JVM默认值"></a>如何盘点查看JVM默认值</h1><h2 id="JVM的参数类型"><a href="#JVM的参数类型" class="headerlink" title="JVM的参数类型"></a>JVM的参数类型</h2><h3 id="标配参数"><a href="#标配参数" class="headerlink" title="标配参数"></a>标配参数</h3><ul>
+<li>-version</li>
+<li>-help</li>
+<li>java -showversion</li>
+</ul>
+<h3 id="X参数"><a href="#X参数" class="headerlink" title="X参数"></a>X参数</h3><ul>
+<li>-Xint：解释执行</li>
+<li>-Xcomp：第一次使用就编译成本地代码</li>
+<li>-Xmixed：混合模式</li>
+</ul>
+<h3 id="XX参数"><a href="#XX参数" class="headerlink" title="XX参数"></a>XX参数</h3><ol>
+<li><p>Boolean类型</p>
+<p>公式：<strong>-XX:+或者-某个属性值</strong></p>
+<p>是否打印GC回收细节：<strong>-XX:+PrintGCDetails</strong></p>
+<p>是否使用串行垃圾回收器：<strong>-XX:+PrintCommandLineFlags</strong></p>
+</li>
+<li><p>KV设值类型</p>
+<p>公式：<strong>-XX:属性key=属性值value</strong></p>
+<p>案例：</p>
+<p>-XX:MetaspaceSize=128m</p>
+<p>-XX:MaxTernuringThreshold</p>
+</li>
+<li><p>其它</p>
+<p>​    <img src="/images/jvm/image-20191107135529325.png" alt="image-20191107135529325"></p>
+</li>
+</ol>
+<h2 id="盘点家底查看JVM默认值"><a href="#盘点家底查看JVM默认值" class="headerlink" title="盘点家底查看JVM默认值"></a>盘点家底查看JVM默认值</h2><ol>
+<li><p>-XX:+PrintFlagsInital</p>
+<p>查看初始默认值。</p>
+<p>公式：</p>
+<ul>
+<li>java -XX:+PrintFlagsInital version</li>
+<li>java -XX:+PrintFlagsInital</li>
+</ul>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107135949381.png" alt="image-20191107135949381"></p>
+</li>
+<li><p>-XX:+PrintFlagsFinal</p>
+</li>
+<li><p>PrintFlagsFinal举例，运行java的同时打印参数</p>
+</li>
+<li><p>-XX:+PrintCommandLineFlags</p>
+<p>查看默认垃圾收集器。</p>
+<p><img src="/images/jvm/image-20191107140014832.png" alt="image-20191107140014832"></p>
+</li>
+</ol>
+<h1 id="工作用过的JVM常用基本配置参数"><a href="#工作用过的JVM常用基本配置参数" class="headerlink" title="工作用过的JVM常用基本配置参数"></a>工作用过的JVM常用基本配置参数</h1><h2 id="基础知识复习"><a href="#基础知识复习" class="headerlink" title="基础知识复习"></a>基础知识复习</h2><p><img src="/images/jvm/image-20191107140212106.png" alt="image-20191107140212106"></p>
+<h2 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h2><p><img src="/images/jvm/image-20191107140259138.png" alt="image-20191107140259138"></p>
+<p>典型设置案例：</p>
+<p><strong>-Xms128m -Xmx4096 -Xss1024k -XX:MetaspaceSize=512m -XX:+PrintCommandLineFlags -XX:+PrintGCDetails -XX:+UseSerialGC</strong></p>
+<h1 id="强、弱、软、虚引用分别是什么？"><a href="#强、弱、软、虚引用分别是什么？" class="headerlink" title="强、弱、软、虚引用分别是什么？"></a>强、弱、软、虚引用分别是什么？</h1><h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2><p><img src="/images/jvm/image-20191107140452601.png" alt="image-20191107140452601"></p>
+<h2 id="强引用（默认支持模式）"><a href="#强引用（默认支持模式）" class="headerlink" title="强引用（默认支持模式）"></a>强引用（默认支持模式）</h2><p><img src="/images/jvm/image-20191107140516522.png" alt="image-20191107140516522"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107140529680.png" alt="image-20191107140529680"></p>
+<h2 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h2><p><img src="/images/jvm/image-20191107140604482.png" alt="image-20191107140604482"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107140615889.png" alt="image-20191107140615889"></p>
+<h2 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h2><p>案例：</p>
+<p><img src="/images/jvm/image-20191107140640395.png" alt="image-20191107140640395"></p>
+<p><strong>软引用与弱引用适用场景：</strong></p>
+<p><img src="/images/jvm/image-20191107140705479.png" alt="image-20191107140705479"></p>
+<h3 id="你知道弱引用，能谈谈WeakHashMap吗"><a href="#你知道弱引用，能谈谈WeakHashMap吗" class="headerlink" title="你知道弱引用，能谈谈WeakHashMap吗"></a>你知道弱引用，能谈谈WeakHashMap吗</h3><p><img src="/images/jvm/image-20191107140732376.png" alt="image-20191107140732376"></p>
+<h2 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h2><h2 id="GCRoots和四大引用总结"><a href="#GCRoots和四大引用总结" class="headerlink" title="GCRoots和四大引用总结"></a>GCRoots和四大引用总结</h2><p><img src="/images/jvm/image-20191107140814322.png" alt="image-20191107140814322"></p>
+<h1 id="谈谈你对OMM的认识"><a href="#谈谈你对OMM的认识" class="headerlink" title="谈谈你对OMM的认识"></a>谈谈你对OMM的认识</h1><ol>
+<li><p>java.lang.StackOverFlowExceptioin</p>
+<p><img src="/images/jvm/image-20191107140939735.png" alt="image-20191107140939735"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Java heap space</p>
+<p><img src="/images/jvm/image-20191107140949807.png" alt="image-20191107140949807"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：GC overhead limit exceeded</p>
+<p><img src="/images/jvm/image-20191107140959835.png" alt="image-20191107140959835"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Direct buffer memory</p>
+<p><img src="/images/jvm/image-20191107141011179.png" alt="image-20191107141011179"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：unable to create new native thread</p>
+<p><img src="/images/jvm/image-20191107141021808.png" alt="image-20191107141021808"></p>
+<p>服务器级别参数调优：</p>
+<p><img src="/images/jvm/image-20191107141038468.png" alt="image-20191107141038468"></p>
+</li>
+<li><p>java.lang.OutOfMemoryException：Metaspace</p>
+<p>Java以后的JVM：</p>
+<p><img src="/images/jvm/image-20191107141056572.png" alt="image-20191107141056572"></p>
+<p>案例：</p>
+<p><img src="/images/jvm/image-20191107141122690.png" alt="image-20191107141122690"></p>
+</li>
+</ol>
+<h1 id="GC回收算法与垃圾回收器的关系？"><a href="#GC回收算法与垃圾回收器的关系？" class="headerlink" title="GC回收算法与垃圾回收器的关系？"></a>GC回收算法与垃圾回收器的关系？</h1><ol>
+<li><p>GC算法(引用计数/复制/标清/标整)是内存回收的方法论，垃圾收集器就是算法落地实现。</p>
+</li>
+<li><p>因为目前为止还没有完美的收集器出现，更加没有万能的收集器，只是针对具体应用最合适的收集器，进行分代收集</p>
+</li>
+<li><p>4种主要的垃圾收集器</p>
+<p><img src="/images/jvm/image-20191107141258875.png" alt="image-20191107141258875"></p>
+<p><img src="/images/jvm/image-20191107141234365.png" alt="image-20191107141234365"></p>
+</li>
+</ol>
+<h1 id="生产上你是如何配置垃圾收集器的？"><a href="#生产上你是如何配置垃圾收集器的？" class="headerlink" title="生产上你是如何配置垃圾收集器的？"></a>生产上你是如何配置垃圾收集器的？</h1><h2 id="怎么查看默认垃圾回收器是哪个"><a href="#怎么查看默认垃圾回收器是哪个" class="headerlink" title="怎么查看默认垃圾回收器是哪个"></a>怎么查看默认垃圾回收器是哪个</h2><p>java -XX:+PrintCommandLineFlags -version</p>
+<p><img src="/images/jvm/image-20191107141429408.png" alt="image-20191107141429408"></p>
+<h2 id="默认垃圾回收器有哪些？"><a href="#默认垃圾回收器有哪些？" class="headerlink" title="默认垃圾回收器有哪些？"></a>默认垃圾回收器有哪些？</h2><ul>
+<li>UseSerialGC</li>
+<li>UseParalelGC</li>
+<li>UseConcMarkSweepGC</li>
+<li>UseParNewGC</li>
+<li>UseParallelOldGC</li>
+<li>UseG1GC</li>
+</ul>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p><img src="/images/jvm/image-20191107141544236.png" alt="image-20191107141544236"></p>
+<h3 id="参数预先说明"><a href="#参数预先说明" class="headerlink" title="参数预先说明"></a>参数预先说明</h3><p><img src="/images/jvm/image-20191107141643259.png" alt="image-20191107141643259"></p>
+<h3 id="Server-Client模式分别是什么意思"><a href="#Server-Client模式分别是什么意思" class="headerlink" title="Server/Client模式分别是什么意思"></a>Server/Client模式分别是什么意思</h3><p><img src="/images/jvm/image-20191107141733417.png" alt="image-20191107141733417"></p>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li><p>串行GC(Serial)/(Serial Copying)</p>
+<p><img src="/images/jvm/image-20191107141813869.png" alt="image-20191107141813869"></p>
+</li>
+<li><p>并行GC(ParNew)</p>
+<p><img src="/images/jvm/image-20191107141823653.png" alt="image-20191107141823653"></p>
+</li>
+<li><p>并行回收GC(Parallel)/(Parallel Scavenge)</p>
+<p><img src="C:%5CUsers%5CCzz%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20191107141835782.png" alt="image-20191107141835782"></p>
+</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li><p>串行GC。</p>
+</li>
+<li><p>并行GC(Parallel Old)/(Parallel MSC)</p>
+<p><img src="/images/jvm/image-20191107142028848.png" alt="image-20191107142028848"></p>
+</li>
+<li><p>并发标记清除GC(CMS)</p>
+<p>4个步骤：</p>
+<p><img src="/images/jvm/image-20191107142133689.png" alt="image-20191107142133689"></p>
+<ul>
+<li>初始化标记(CMS init Mark)</li>
+<li>并发标记(CMR concurrent mark)和用户线程一起</li>
+<li>重新标记</li>
+<li>并发清除</li>
+</ul>
+<p>优缺点：</p>
+<ul>
+<li>优点：并发收集，低停顿</li>
+<li>缺点：并发执行对CPU压力大</li>
+<li>缺点：采用标记清除算法会导致大量碎片</li>
+</ul>
+</li>
+</ol>
+<h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@desc</span></span></span><br><span class="line"><span class="comment"> * 1.</span></span><br><span class="line"><span class="comment"> * 2</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParNewGC  (ParNew[par new generation] + Tenured[tenured generation])</span></span><br><span class="line"><span class="comment"> *  备注情况：Java HotSpot(TM) 64-Bit Server VM warning:</span></span><br><span class="line"><span class="comment"> *  Using the ParNew young collector with the Serial old collector is deprecated</span></span><br><span class="line"><span class="comment"> *  and will likely be removed in a future release</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 3</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParallelGC   (PSYoungGen + ParOldGen)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 4</span></span><br><span class="line"><span class="comment"> * 4.1</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseParallelOldGC  (PSYoungGen + ParOldGen)</span></span><br><span class="line"><span class="comment"> * 4.2 不加就默认UseParallelGC</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 5</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseConcMarkSweepGC  （parNew + concurrent mark-sweep generation）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 6</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseG1GC     （garbage-first heap）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 7（理论知道即可，实际中已经被优化掉了，没有了。）</span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+PrintCommandLineFlags -XX:+UseSerialOldGC</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> xw</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2019/8/28</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GCDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="string">"aaa"</span>;</span><br><span class="line">        System.out.println(<span class="string">"GC test"</span>);</span><br><span class="line">        str = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="垃圾收集器配置代码总结"><a href="#垃圾收集器配置代码总结" class="headerlink" title="垃圾收集器配置代码总结"></a>垃圾收集器配置代码总结</h3><p><img src="/images/jvm/image-20191107142349883.png" alt="image-20191107142349883"></p>
+<h1 id="G1垃圾收集器"><a href="#G1垃圾收集器" class="headerlink" title="G1垃圾收集器"></a>G1垃圾收集器</h1><h2 id="以前垃圾回收器的特点"><a href="#以前垃圾回收器的特点" class="headerlink" title="以前垃圾回收器的特点"></a>以前垃圾回收器的特点</h2><ul>
+<li>年轻代和老年代是各自独立连续的内存块</li>
+<li>年轻代收集使用单eden+S0+S1进行复制算法</li>
+<li>老年代收集必须扫描整个老年代区域</li>
+<li>都是以尽可能少而快地执行GC为设计原则</li>
+</ul>
+<h2 id="G1是什么"><a href="#G1是什么" class="headerlink" title="G1是什么"></a>G1是什么</h2><p><img src="/images/jvm/image-20191107142515620.png" alt="image-20191107142515620"></p>
+<p>特点：</p>
+<p><img src="/images/jvm/image-20191107142545907.png" alt="image-20191107142545907"></p>
+<h2 id="底层原理"><a href="#底层原理" class="headerlink" title="底层原理"></a>底层原理</h2><ol>
+<li><p>Region区域化垃圾收集器</p>
+<p><img src="/images/jvm/image-20191107142632872.png" alt="image-20191107142632872"></p>
+</li>
+<li><p>回收步骤</p>
+<p><img src="/images/jvm/image-20191107142644124.png" alt="image-20191107142644124"></p>
+</li>
+<li><p>4步过程</p>
+<p><img src="/images/jvm/image-20191107142653123.png" alt="image-20191107142653123"></p>
+</li>
+</ol>
+<h2 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@desc</span></span></span><br><span class="line"><span class="comment"> *  -Xms10m -Xmx10m -XX:+PrintGCDetails -XX:+UseG1GC</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> xw</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2019/8/28</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">G1Demo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="string">"abc"</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            str += str + <span class="keyword">new</span> Random().nextInt(<span class="number">77777777</span>) + <span class="keyword">new</span> Random().nextInt(<span class="number">88888888</span>);</span><br><span class="line">            str.intern();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用配置参数"><a href="#常用配置参数" class="headerlink" title="常用配置参数"></a>常用配置参数</h2><p>开发人员仅仅需要声明以下参数即可：</p>
+<p><strong>三步归纳：开始G1+设置最大内存+设置最大停顿时间</strong></p>
+<p><strong>-XX:+UseG1GC       -Xmx32g        -XX:MaxGCPauseMillis=100</strong></p>
+<p><strong>-XX:MaxGCPauseMillis=n：</strong>最大GC停顿时间单位毫秒，这是个软目标，JVM将尽可能（但不保证）停顿小于这个时间</p>
+<h2 id="和CMS相比的优势"><a href="#和CMS相比的优势" class="headerlink" title="和CMS相比的优势"></a>和CMS相比的优势</h2><ul>
+<li>G1不会产生内存碎片</li>
+<li>是可以精确控制停顿。该收集器是把整个堆（新生代、老年代）划分多个固定大小的区域，每次根据允许停顿的时间去收集垃圾最多的区域。</li>
+</ul>
+<h1 id="生产环境服务器变慢，诊断思路和性能评估谈谈？"><a href="#生产环境服务器变慢，诊断思路和性能评估谈谈？" class="headerlink" title="生产环境服务器变慢，诊断思路和性能评估谈谈？"></a>生产环境服务器变慢，诊断思路和性能评估谈谈？</h1><h2 id="整机：top"><a href="#整机：top" class="headerlink" title="整机：top"></a>整机：top</h2><p>update，系统命令的精简版。</p>
+<h2 id="CPU：vmstat"><a href="#CPU：vmstat" class="headerlink" title="CPU：vmstat"></a>CPU：vmstat</h2><ol>
+<li><p>查看CPU(包含不限于)</p>
+<p><img src="/images/jvm/image-20191107143033185.png" alt="image-20191107143033185"></p>
+</li>
+<li><p>查看额外</p>
+<p><img src="/images/jvm/image-20191107143042588.png" alt="image-20191107143042588"></p>
+</li>
+</ol>
+<h2 id="内存：free"><a href="#内存：free" class="headerlink" title="内存：free"></a>内存：free</h2><ol>
+<li><p>应用程序可用内存数。</p>
+<p><img src="/images/jvm/image-20191107143133049.png" alt="image-20191107143133049"></p>
+</li>
+<li><p>查看额外</p>
+<p>pidstat -p 进程号 -r 采样间隔秒数</p>
+</li>
+</ol>
+<h2 id="硬盘：df"><a href="#硬盘：df" class="headerlink" title="硬盘：df"></a>硬盘：df</h2><p>查看磁盘剩余空间。</p>
+<p><img src="/images/jvm/image-20191107143201594.png" alt="image-20191107143201594"></p>
+<h2 id="磁盘IO：iostat"><a href="#磁盘IO：iostat" class="headerlink" title="磁盘IO：iostat"></a>磁盘IO：iostat</h2><ol>
+<li><p>磁盘IO性能评估</p>
+<p><img src="/images/jvm/image-20191107143236114.png" alt="image-20191107143236114"></p>
+</li>
+<li><p>查看额外</p>
+<p>pidstat -p 进程号 -r 采样间隔秒数</p>
+</li>
+</ol>
+<h2 id="网络IO：ifstat"><a href="#网络IO：ifstat" class="headerlink" title="网络IO：ifstat"></a>网络IO：ifstat</h2><ol>
+<li><p>默认本地没有，下载ifstat</p>
+<p><img src="/images/jvm/image-20191107143339451.png" alt="image-20191107143339451"></p>
+</li>
+<li><p>查看网络IO</p>
+<p><img src="/images/jvm/image-20191107143350158.png" alt="image-20191107143350158"></p>
+</li>
+</ol>
+<h1 id="假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位"><a href="#假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位" class="headerlink" title="假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位"></a>假如生产环境出现CPU占用过高，请谈谈你的分析思路和定位</h1><ol>
+<li><p>先用top命令找出CPU占比最高的</p>
+</li>
+<li><p>ps -ef或者jps进一步定位进程</p>
+</li>
+<li><p>定位到具体线程或代码</p>
+<p><strong>ps -mp 进程 -o THREAD,tid,time</strong></p>
+<ul>
+<li>-m 显示所有的线程</li>
+<li>-p pid 进程使用cpu的时间</li>
+<li>-o 该参数后是用户自定义格式</li>
+</ul>
+<p><img src="/images/jvm/image-20191107143553680.png" alt="image-20191107143553680"></p>
+</li>
+<li><p>将需要的<strong>线程ID</strong>转换为16进制格式（英文小写格式）</p>
+<p>printf “%x\n” 有问题的<strong>线程ID</strong></p>
+</li>
+<li><p>jstatck <strong>进程ID</strong> | grep tid（16进制线程ID小写英文）-A60</p>
+<p><img src="/images/jvm/image-20191107143657206.png" alt="image-20191107143657206"></p>
+</li>
+</ol>
+<h1 id="JVM性能监测工具"><a href="#JVM性能监测工具" class="headerlink" title="JVM性能监测工具"></a>JVM性能监测工具</h1><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>JVM和GC解析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一章-JVM基础知识</title>
+    <url>/2019/11/07/%E7%AC%AC%E4%B8%80%E7%AB%A0-JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<h1 id="JVM内存结构"><a href="#JVM内存结构" class="headerlink" title="JVM内存结构"></a>JVM内存结构</h1><p><img src="/images/jvm/image-20191107134516313.png" alt="image-20191107134516313"></p>
+<h1 id="GC作用域"><a href="#GC作用域" class="headerlink" title="GC作用域"></a>GC作用域</h1><ul>
+<li>方法区</li>
+<li>堆</li>
+</ul>
+<h1 id="常见的垃圾回收算法"><a href="#常见的垃圾回收算法" class="headerlink" title="常见的垃圾回收算法"></a>常见的垃圾回收算法</h1><ol>
+<li><p>引用计数法</p>
+<p><img src="/images/jvm/image-20191107134656359.png" alt="image-20191107134656359"></p>
+</li>
+<li><p>复制</p>
+<p><img src="/images/jvm/image-20191107134707185.png" alt="image-20191107134707185"></p>
+</li>
+<li><p>标记清除</p>
+<p><img src="/images/jvm/image-20191107134716056.png" alt="image-20191107134716056"></p>
+</li>
+<li><p>标记整理</p>
+<p><img src="/images/jvm/image-20191107134726367.png" alt="image-20191107134726367"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>JVM和GC解析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第十章-死锁编码及定位分析</title>
     <url>/2019/11/07/%E7%AC%AC%E5%8D%81%E7%AB%A0-%E6%AD%BB%E9%94%81%E7%BC%96%E7%A0%81%E5%8F%8A%E5%AE%9A%E4%BD%8D%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h1><p><img src="/images/juc/image-20191107112214586.png" alt="image-20191107112214586"></p>
@@ -2578,8 +2872,8 @@
         <category>工具</category>
       </categories>
       <tags>
-        <tag>常用命令</tag>
         <tag>github</tag>
+        <tag>常用命令</tag>
       </tags>
   </entry>
   <entry>
