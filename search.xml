@@ -1,6 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第八章-Redis的Java客户端Jedis</title>
+    <url>/2019/11/07/%E7%AC%AC%E5%85%AB%E7%AB%A0-Redis%E7%9A%84Java%E5%AE%A2%E6%88%B7%E7%AB%AFJedis/</url>
+    <content><![CDATA[<h1 id="测试连通性"><a href="#测试连通性" class="headerlink" title="测试连通性"></a>测试连通性</h1><p><img src="/images/redis/image-20191107100045545.png" alt="image-20191107100045545"></p>
+<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><p><img src="/images/redis/image-20191107100104420.png" alt="image-20191107100104420"></p>
+<p><img src="/images/redis/image-20191107100115108.png" alt="image-20191107100115108"></p>
+<h1 id="事务提交"><a href="#事务提交" class="headerlink" title="事务提交"></a>事务提交</h1><p><img src="/images/redis/image-20191107100145146.png" alt="image-20191107100145146"></p>
+<p>watch：</p>
+<p><img src="/images/redis/image-20191107100158522.png" alt="image-20191107100158522"></p>
+<h1 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h1><p><img src="/images/redis/image-20191107100221730.png" alt="image-20191107100221730"></p>
+<h1 id="连接池"><a href="#连接池" class="headerlink" title="连接池"></a>连接池</h1><ol>
+<li><p>配置总结</p>
+<p><img src="/images/redis/image-20191107100253836.png" alt="image-20191107100253836"></p>
+</li>
+<li><p>TestPool</p>
+<p><img src="/images/redis/image-20191107100304117.png" alt="image-20191107100304117"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第七章-Redis的复制（Master/Slave）</title>
+    <url>/2019/11/07/%E7%AC%AC%E4%B8%83%E7%AB%A0-Redis%E7%9A%84%E5%A4%8D%E5%88%B6%EF%BC%88Master-Slave%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h1><p><img src="/images/redis/image-20191107095240079.png" alt="image-20191107095240079"></p>
+<p>Redis的发布订阅：</p>
+<p><img src="/images/redis/image-20191107100540598.png" alt="image-20191107100540598"></p>
+<h1 id="怎么玩"><a href="#怎么玩" class="headerlink" title="怎么玩"></a>怎么玩</h1><p><img src="/images/redis/image-20191107095308723.png" alt="image-20191107095308723"></p>
+<ol>
+<li><p>修改配置文件细节操作</p>
+<p><img src="/images/redis/image-20191107095347163.png" alt="image-20191107095347163"></p>
+</li>
+<li><p>常用3招</p>
+<p>一主二从：</p>
+<p><img src="/images/redis/image-20191107095529701.png" alt="image-20191107095529701"></p>
+<p>薪火相传：</p>
+<p><img src="/images/redis/image-20191107095542204.png" alt="image-20191107095542204"></p>
+<p><img src="/images/redis/image-20191107095551525.png" alt="image-20191107095551525"></p>
+<p>反客为主：（略）</p>
+</li>
+</ol>
+<h1 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h1><p>   <img src="/images/redis/image-20191107095737175.png" alt="image-20191107095737175"></p>
+<ol>
+<li><p>案例</p>
+<p><img src="/images/redis/image-20191107095808005.png" alt="image-20191107095808005"></p>
+</li>
+<li><p>投票新选</p>
+<p><img src="/images/redis/image-20191107095819454.png" alt="image-20191107095819454"></p>
+</li>
+</ol>
+<h1 id="复制的缺点"><a href="#复制的缺点" class="headerlink" title="复制的缺点"></a>复制的缺点</h1><p><img src="/images/redis/image-20191107095844770.png" alt="image-20191107095844770"></p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第六章-Redis的事务</title>
+    <url>/2019/11/07/%E7%AC%AC%E5%85%AD%E7%AB%A0-Redis%E7%9A%84%E4%BA%8B%E5%8A%A1/</url>
+    <content><![CDATA[<h1 id="能干嘛"><a href="#能干嘛" class="headerlink" title="能干嘛"></a>能干嘛</h1><p>一个队列中，一次性、顺序性、排他性的执行一系列命令。</p>
+<h1 id="怎么玩"><a href="#怎么玩" class="headerlink" title="怎么玩"></a>怎么玩</h1><h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><p><img src="/images/redis/image-20191107094605591.png" alt="image-20191107094605591"></p>
+<h2 id="正常执行"><a href="#正常执行" class="headerlink" title="正常执行"></a>正常执行</h2><p><img src="/images/redis/image-20191107094629434.png" alt="image-20191107094629434"></p>
+<h2 id="放弃事务"><a href="#放弃事务" class="headerlink" title="放弃事务"></a>放弃事务</h2><p><img src="/images/redis/image-20191107094649681.png" alt="image-20191107094649681"></p>
+<h2 id="全体连坐"><a href="#全体连坐" class="headerlink" title="全体连坐"></a>全体连坐</h2><p><img src="/images/redis/image-20191107094707817.png" alt="image-20191107094707817"></p>
+<h2 id="冤头债主"><a href="#冤头债主" class="headerlink" title="冤头债主"></a>冤头债主</h2><p><img src="/images/redis/image-20191107094726737.png" alt="image-20191107094726737"></p>
+<h2 id="Watch监控"><a href="#Watch监控" class="headerlink" title="Watch监控"></a>Watch监控</h2><ol>
+<li><p>悲观锁/乐观锁</p>
+<p><img src="/images/redis/image-20191107094819754.png" alt="image-20191107094819754"></p>
+</li>
+<li><p>初始化信用卡可用余额和欠额</p>
+<p><img src="/images/redis/image-20191107094828291.png" alt="image-20191107094828291"></p>
+</li>
+<li><p>小结</p>
+<p><img src="/images/redis/image-20191107094848858.png" alt="image-20191107094848858"></p>
+</li>
+</ol>
+<h1 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h1><p><img src="/images/redis/image-20191107095016771.png" alt="image-20191107095016771"></p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第五章-Redis的持久化</title>
+    <url>/2019/11/07/%E7%AC%AC%E4%BA%94%E7%AB%A0-Redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h1><ol>
+<li><p>是什么</p>
+<p><img src="/images/redis/image-20191107094043005.png" alt="image-20191107094043005"></p>
+</li>
+<li><p>fork</p>
+<p><img src="/images/redis/image-20191107094053138.png" alt="image-20191107094053138"></p>
+</li>
+<li><p>如何触发rdb快照</p>
+<p><img src="/images/redis/image-20191107094104380.png" alt="image-20191107094104380"></p>
+<p>save或者bgsave：</p>
+<p><img src="/images/redis/image-20191107094125016.png" alt="image-20191107094125016"></p>
+</li>
+<li><p>优势</p>
+<ul>
+<li>适合大规模的数据恢复</li>
+<li>对数据完整性和一致性要求不高</li>
+</ul>
+</li>
+<li><p>劣势</p>
+<p><img src="/images/redis/image-20191107094222190.png" alt="image-20191107094222190"></p>
+</li>
+<li><p>如何停止</p>
+<p>动态所有停止RDB保存规则的方法：redis-cli config set save “”</p>
+</li>
+<li><p>小总结</p>
+<p><img src="/images/redis/image-20191107094304748.png" alt="image-20191107094304748"></p>
+</li>
+</ol>
+<h1 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h1><p><img src="/images/redis/image-20191107094326953.png" alt="image-20191107094326953"></p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第四章-解析配置文件redis.conf</title>
+    <url>/2019/11/07/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E8%A7%A3%E6%9E%90%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6redis-conf/</url>
+    <content><![CDATA[<h1 id="它在哪"><a href="#它在哪" class="headerlink" title="它在哪"></a>它在哪</h1><ol>
+<li><p>地址</p>
+<p><img src="/images/redis/image-20191107091624409.png" alt="image-20191107091624409"></p>
+</li>
+<li><p>dir位置</p>
+<p><img src="/images/redis/image-20191107091636370.png" alt="image-20191107091636370"></p>
+</li>
+</ol>
+<h1 id="GENERAL通用"><a href="#GENERAL通用" class="headerlink" title="GENERAL通用"></a>GENERAL通用</h1><ol>
+<li><p>Tcp-backlog</p>
+<p><img src="/images/redis/image-20191107091727903.png" alt="image-20191107091727903"></p>
+</li>
+<li><p>Tcp-keepalive</p>
+<p>单位为秒，如果设置为0，则不会进行Keepalive检测，建议设置成60.</p>
+</li>
+<li><p>Syslog-enabled</p>
+<p>是否把日志输出到syslog中。</p>
+</li>
+<li><p>Syslog-ident</p>
+<p>指定syslog里的日志标志。</p>
+</li>
+<li><p>Syslog-facility</p>
+<p>指定syslog设备，值可以是USER或LOCAL0-LOCAL7</p>
+</li>
+</ol>
+<h1 id="SNAPSHOTTING快照"><a href="#SNAPSHOTTING快照" class="headerlink" title="SNAPSHOTTING快照"></a>SNAPSHOTTING快照</h1><ol>
+<li><p>save</p>
+<p><img src="/images/redis/image-20191107092023992.png" alt="image-20191107092023992"></p>
+</li>
+<li><p>stop-writes-on-bgsave-error</p>
+<p><img src="/images/redis/image-20191107092035454.png" alt="image-20191107092035454"></p>
+</li>
+<li><p>rdbchecksum</p>
+<p><img src="/images/redis/image-20191107092045014.png" alt="image-20191107092045014"></p>
+</li>
+</ol>
+<h1 id="Security安全"><a href="#Security安全" class="headerlink" title="Security安全"></a>Security安全</h1><p>访问密码的查看、设置和取消.</p>
+<h1 id="Limit限制"><a href="#Limit限制" class="headerlink" title="Limit限制"></a>Limit限制</h1><ul>
+<li>Maxmemory</li>
+<li>Maxclients</li>
+<li>Maxmemory-policy</li>
+<li>Maxmemory-samples</li>
+</ul>
+<p>Maxmemory-policy：</p>
+<p><img src="/images/redis/image-20191107092325440.png" alt="image-20191107092325440"></p>
+<h1 id="常见配置redis-conf介绍"><a href="#常见配置redis-conf介绍" class="headerlink" title="常见配置redis.conf介绍"></a>常见配置redis.conf介绍</h1><p><img src="/images/redis/image-20191107093244658.png" alt="image-20191107093244658"></p>
+<p><img src="/images/redis/image-20191107093304810.png" alt="image-20191107093304810"></p>
+<p><img src="/images/redis/image-20191107093315274.png" alt="image-20191107093315274"></p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第三章-Redis数据类型</title>
     <url>/2019/11/06/%E7%AC%AC%E4%B8%89%E7%AB%A0-Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="Redis五大数据类型"><a href="#Redis五大数据类型" class="headerlink" title="Redis五大数据类型"></a>Redis五大数据类型</h1><ul>
